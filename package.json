@@ -5,6 +5,9 @@
   "workspaces": [
     "[0-9][0-9]-*"
   ],
+  "scripts": {
+    "build:site": "node scripts/build-site.mjs"
+  },
   "devDependencies": {
     "@slidev/cli": "53.1.0",
     "@slidev/theme-default": "0.25.0",
