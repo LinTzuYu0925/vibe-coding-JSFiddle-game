@@ -1,0 +1,11 @@
+{
+  "name": "game-experience-design",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build",
+    "export": "slidev export",
+    "shots": "node scripts/capture-shots.mjs"
+  }
+}

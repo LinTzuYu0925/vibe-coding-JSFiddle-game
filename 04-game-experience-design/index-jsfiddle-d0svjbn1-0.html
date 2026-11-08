@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2.5D Soccer</title>
+
+  <style>
+    * {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 15px;
+  background: #10182b;
+  font-family: Arial, sans-serif;
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+
+#game {
+  position: relative;
+  width: min(100%, 900px);
+  overflow: hidden;
+  background: #17243a;
+  border: 3px solid #344968;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 15px 50px #0008;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+  padding: 12px;
+  background: linear-gradient(90deg, #10233c, #1e4260);
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-size: clamp(14px, 3vw, 22px);
+  font-weight: 900;
+  color: #65f3d1;
+  letter-spacing: 1px;
+}
+
+.stat {
+  font-weight: bold;
+  font-size: 14px;
+  color: #c8d8ef;
+}
+
+.stat span {
+  color: #ffe45e;
+  font-size: 23px;
+  margin-left: 5px;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #286b37;
+}
+
+#message {
+  position: absolute;
+  top: 43%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(24px, 5vw, 48px);
+  font-weight: 900;
+  color: #fff36b;
+  text-shadow: 3px 4px 0 #152b48, 0 0 20px #000;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  padding: 10px;
+  color: #b9d6ef;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+button {
+  margin: 0 0 12px;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #ffe65c, #ffad36);
+  color: #17243a;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #b56c21;
+}
+
+button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+  </style>
+
+  
+</head>
+<body>
+  <div id="game">
+  <div class="topbar">
+    <div class="brand">⚽ SUPER STRIKER</div>
+    <div class="stat">GOALS <span id="score">0</span></div>
+    <div class="stat">TIME <span id="time">60</span></div>
+  </div>
+
+  <canvas id="gameCanvas" width="900" height="620"></canvas>
+
+  <div id="message">GET READY!</div>
+
+  <div class="controls">
+    <span>⬆⬇⬅➡ MOVE</span>
+    <span>SPACE SHOOT</span>
+  </div>
+
+  <button id="startButton">▶ START GAME</button>
+</div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const scoreText = document.getElementById("score");
+const timeText = document.getElementById("time");
+const message = document.getElementById("message");
+const startButton = document.getElementById("startButton");
+
+const W = canvas.width;
+const H = canvas.height;
+
+// ========================================
+// GAME STATE
+// ========================================
+
+let score = 0;
+let timeLeft = 60;
+let running = false;
+let gameEnded = false;
+
+let lastTime = 0;
+let elapsed = 0;
+let shotCooldown = 0;
+let goalFlash = 0;
+
+const keys = {};
+
+const player = {
+  x: 50,
+  y: 82,
+  speed: 32
+};
+
+const ball = {
+  x: 50,
+  y: 76,
+  vx: 0,
+  vy: 0,
+  moving: false
+};
+
+const goalkeeper = {
+  x: 50,
+  y: 7
+};
+
+let defenders = [];
+
+// ========================================
+// PERSPECTIVE PROJECTION
+// World coordinates:
+// x = 0..100, y = 0..100
+// ========================================
+
+function project(x, y) {
+  const scale = 2.8 + y * 0.056;
+
+  return {
+    x: W / 2 + (x - 50) * scale,
+    y: 55 + y * 5.1,
+    scale: scale
+  };
+}
+
+function polygon(points, color) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+
+  points.forEach((p, i) => {
+    if (i === 0) {
+      ctx.moveTo(p.x, p.y);
+    } else {
+      ctx.lineTo(p.x, p.y);
+    }
+  });
+
+  ctx.closePath();
+  ctx.fill();
+}
+
+function lineBetween(a, b, color, width) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.stroke();
+}
+
+function fieldLine(points, width = 3) {
+  ctx.strokeStyle = "rgba(255,255,255,0.9)";
+  ctx.lineWidth = width;
+  ctx.beginPath();
+
+  points.forEach((p, i) => {
+    const q = project(p[0], p[1]);
+
+    if (i === 0) {
+      ctx.moveTo(q.x, q.y);
+    } else {
+      ctx.lineTo(q.x, q.y);
+    }
+  });
+
+  ctx.stroke();
+}
+
+// ========================================
+// DRAW STADIUM
+// ========================================
+
+function drawStadium() {
+  const sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, "#172c4b");
+  sky.addColorStop(1, "#405c6b");
+
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, H);
+
+  // Stadium stands
+  polygon([
+    { x: 0, y: 0 },
+    { x: W, y: 0 },
+    { x: W, y: 75 },
+    { x: 0, y: 75 }
+  ], "#253c5d");
+
+  // Crowd dots
+  const crowdColors = [
+    "#ffcd61", "#f36f78", "#8bd8ee",
+    "#f7f3d4", "#a8e59b", "#d3a3ff"
+  ];
+
+  for (let row = 0; row < 3; row++) {
+    for (let x = 8; x < W; x += 16) {
+      ctx.fillStyle =
+        crowdColors[(x + row * 7) % crowdColors.length];
+
+      ctx.beginPath();
+      ctx.arc(
+        x + Math.sin(x * 0.1) * 3,
+        12 + row * 15,
+        4,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+  }
+
+  // Advertising boards
+  ctx.fillStyle = "#e9d36b";
+  ctx.fillRect(0, 48, W, 24);
+
+  ctx.fillStyle = "#15334d";
+  ctx.font = "bold 14px Arial";
+  ctx.textAlign = "center";
+
+  for (let x = 90; x < W; x += 180) {
+    ctx.fillText("SUPER STRIKER", x, 64);
+  }
+}
+
+// ========================================
+// DRAW FIELD
+// ========================================
+
+function drawField() {
+  const corners = [
+    project(0, 0),
+    project(100, 0),
+    project(100, 100),
+    project(0, 100)
+  ];
+
+  polygon(corners, "#367f39");
+
+  // Alternating grass stripes
+  for (let i = 0; i < 10; i++) {
+    const y1 = i * 10;
+    const y2 = (i + 1) * 10;
+
+    polygon([
+      project(0, y1),
+      project(100, y1),
+      project(100, y2),
+      project(0, y2)
+    ], i % 2 === 0 ? "#438f40" : "#367c36");
+  }
+
+  // Outer boundary
+  fieldLine([
+    [0, 0], [100, 0], [100, 100],
+    [0, 100], [0, 0]
+  ], 4);
+
+  // Halfway line
+  fieldLine([[0, 50], [100, 50]], 3);
+
+  // Center circle
+  const center = project(50, 50);
+  const radius = 9 * center.scale;
+
+  ctx.strokeStyle = "rgba(255,255,255,0.9)";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.ellipse(
+    center.x,
+    center.y,
+    radius,
+    radius * 0.5,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.stroke();
+
+  // Penalty box
+  fieldLine([
+    [22, 0], [22, 18], [78, 18],
+    [78, 0]
+  ], 3);
+
+  // Goal area
+  fieldLine([
+    [36, 0], [36, 9], [64, 9], [64, 0]
+  ], 3);
+
+  // Penalty spot
+  const spot = project(50, 13);
+
+  ctx.fillStyle = "white";
+  ctx.beginPath();
+  ctx.arc(spot.x, spot.y, 3, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// ========================================
+// DRAW GOAL
+// ========================================
+
+function drawGoal() {
+  const left = project(37, 0);
+  const right = project(63, 0);
+
+  const goalWidth = right.x - left.x;
+  const goalHeight = 62;
+
+  // Goal shadow
+  ctx.fillStyle = "#102b29";
+  ctx.fillRect(left.x - 4, left.y - 3, goalWidth + 8, 12);
+
+  // Net
+  ctx.fillStyle = "#dce9ee";
+  ctx.fillRect(
+    left.x,
+    left.y - goalHeight,
+    goalWidth,
+    goalHeight
+  );
+
+  ctx.fillStyle = "#a7bdc9";
+  ctx.fillRect(
+    left.x + 6,
+    left.y - goalHeight + 6,
+    goalWidth - 12,
+    goalHeight - 6
+  );
+
+  // Net grid
+  ctx.strokeStyle = "rgba(40,65,80,0.55)";
+  ctx.lineWidth = 1;
+
+  for (let x = left.x + 10; x < right.x; x += 12) {
+    ctx.beginPath();
+    ctx.moveTo(x, left.y - goalHeight + 5);
+    ctx.lineTo(x, left.y);
+    ctx.stroke();
+  }
+
+  for (let y = left.y - goalHeight + 8; y < left.y; y += 10) {
+    ctx.beginPath();
+    ctx.moveTo(left.x, y);
+    ctx.lineTo(right.x, y);
+    ctx.stroke();
+  }
+
+  // Goal posts and crossbar
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 7;
+  ctx.strokeRect(
+    left.x,
+    left.y - goalHeight,
+    goalWidth,
+    goalHeight
+  );
+
+  // Crossbar highlight
+  ctx.strokeStyle = "#c8dce7";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(
+    left.x + 3,
+    left.y - goalHeight + 3,
+    goalWidth - 6,
+    goalHeight - 6
+  );
+}
+
+// ========================================
+// DRAW A PLAYER
+// ========================================
+
+function drawPlayerModel(x, y, shirtColor, number, scale, isKeeper = false) {
+  const p = project(x, y);
+
+  const s = scale * p.scale / 6;
+  const bob = Math.sin(elapsed * 8 + x) * 1.5 * s;
+
+  // Long ground shadow
+  ctx.fillStyle = "rgba(0,0,0,0.22)";
+  ctx.beginPath();
+  ctx.ellipse(
+    p.x + 6 * s,
+    p.y + 3 * s,
+    13 * s,
+    6 * s,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+
+  // Legs
+  ctx.strokeStyle = "#202b39";
+  ctx.lineWidth = 5 * s;
+  ctx.lineCap = "round";
+
+  ctx.beginPath();
+  ctx.moveTo(p.x - 4 * s, p.y - 8 * s + bob);
+  ctx.lineTo(p.x - 5 * s, p.y + bob);
+  ctx.moveTo(p.x + 4 * s, p.y - 8 * s + bob);
+  ctx.lineTo(p.x + 5 * s, p.y + bob);
+  ctx.stroke();
+
+  // Shoes
+  ctx.fillStyle = "#111827";
+  ctx.fillRect(p.x - 9 * s, p.y - 2 * s + bob, 7 * s, 4 * s);
+  ctx.fillRect(p.x + 3 * s, p.y - 2 * s + bob, 7 * s, 4 * s);
+
+  // Body
+  ctx.fillStyle = shirtColor;
+  ctx.beginPath();
+  ctx.moveTo(p.x - 8 * s, p.y - 24 * s + bob);
+  ctx.lineTo(p.x + 8 * s, p.y - 24 * s + bob);
+  ctx.lineTo(p.x + 7 * s, p.y - 8 * s + bob);
+  ctx.lineTo(p.x - 7 * s, p.y - 8 * s + bob);
+  ctx.closePath();
+  ctx.fill();
+
+  // Arms
+  ctx.strokeStyle = shirtColor;
+  ctx.lineWidth = 5 * s;
+  ctx.beginPath();
+  ctx.moveTo(p.x - 7 * s, p.y - 21 * s + bob);
+  ctx.lineTo(p.x - 12 * s, p.y - 13 * s + bob);
+  ctx.moveTo(p.x + 7 * s, p.y - 21 * s + bob);
+  ctx.lineTo(p.x + 12 * s, p.y - 13 * s + bob);
+  ctx.stroke();
+
+  // Head
+  ctx.fillStyle = "#e9b58d";
+  ctx.beginPath();
+  ctx.arc(p.x, p.y - 29 * s + bob, 6 * s, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Hair
+  ctx.fillStyle = "#39291f";
+  ctx.beginPath();
+  ctx.arc(
+    p.x,
+    p.y - 32 * s + bob,
+    6 * s,
+    Math.PI,
+    Math.PI * 2
+  );
+  ctx.fill();
+
+  // Number on player's shirt
+  if (number !== null) {
+    ctx.fillStyle = "white";
+    ctx.font = `bold ${8 * s}px Arial`;
+    ctx.textAlign = "center";
+    ctx.fillText(number, p.x, p.y - 14 * s + bob);
+  }
+
+  // Keeper gloves
+  if (isKeeper) {
+    ctx.fillStyle = "#f8ed72";
+    ctx.beginPath();
+    ctx.arc(p.x - 12 * s, p.y - 13 * s, 3 * s, 0, Math.PI * 2);
+    ctx.arc(p.x + 12 * s, p.y - 13 * s, 3 * s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawDefenders() {
+  defenders.forEach((d) => {
+    drawPlayerModel(d.x, d.y, "#e34a43", null, 1.0);
+  });
+}
+
+function drawGoalkeeper() {
+  drawPlayerModel(
+    goalkeeper.x,
+    goalkeeper.y,
+    "#f3c53b",
+    null,
+    1.0,
+    true
+  );
+}
+
+// ========================================
+// DRAW BALL
+// ========================================
+
+function drawBall() {
+  const p = project(ball.x, ball.y);
+  const radius = Math.max(4, p.scale * 1.15);
+
+  // Ball shadow
+  ctx.fillStyle = "rgba(0,0,0,0.25)";
+  ctx.beginPath();
+  ctx.ellipse(
+    p.x + 3,
+    p.y + radius * 0.7,
+    radius * 1.2,
+    radius * 0.55,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+
+  // White ball
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Black center
+  ctx.fillStyle = "#202a37";
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, radius * 0.38, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Small patches
+  for (let i = 0; i < 5; i++) {
+    const a = i * Math.PI * 2 / 5;
+
+    ctx.beginPath();
+    ctx.arc(
+      p.x + Math.cos(a) * radius * 0.68,
+      p.y + Math.sin(a) * radius * 0.68,
+      radius * 0.2,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+  }
+}
+
+// ========================================
+// RESET GAME
+// ========================================
+
+function resetGame() {
+  score = 0;
+  timeLeft = 60;
+  elapsed = 0;
+  shotCooldown = 0;
+  goalFlash = 0;
+
+  player.x = 50;
+  player.y = 82;
+
+  ball.x = 50;
+  ball.y = 76;
+  ball.vx = 0;
+  ball.vy = 0;
+  ball.moving = false;
+
+  goalkeeper.x = 50;
+
+  defenders = [
+    { x: 28, y: 43, homeX: 28, homeY: 43, speed: 8 },
+    { x: 50, y: 29, homeX: 50, homeY: 29, speed: 6 },
+    { x: 72, y: 39, homeX: 72, homeY: 39, speed: 9 }
+  ];
+
+  scoreText.textContent = score;
+  timeText.textContent = timeLeft;
+
+  message.textContent = "";
+  gameEnded = false;
+  running = true;
+  startButton.textContent = "↻ RESTART GAME";
+}
+
+// ========================================
+// SHOOT THE BALL
+// ========================================
+
+function shoot() {
+  if (!running || gameEnded || ball.moving || shotCooldown > 0) {
+    return;
+  }
+
+  // Kick toward the goal, with direction based on player position
+  ball.x = player.x;
+  ball.y = player.y - 5;
+
+  ball.vx = (50 - player.x) * 0.55;
+  ball.vy = -70;
+  ball.moving = true;
+
+  shotCooldown = 0.5;
+}
+
+// ========================================
+// UPDATE PLAYER
+// ========================================
+
+function updatePlayer(dt) {
+  let dx = 0;
+  let dy = 0;
+
+  if (keys.ArrowLeft || keys.a || keys.A) dx -= 1;
+  if (keys.ArrowRight || keys.d || keys.D) dx += 1;
+  if (keys.ArrowUp || keys.w || keys.W) dy -= 1;
+  if (keys.ArrowDown || keys.s || keys.S) dy += 1;
+
+  // Normalize diagonal movement
+  if (dx !== 0 && dy !== 0) {
+    dx *= 0.707;
+    dy *= 0.707;
+  }
+
+  player.x += dx * player.speed * dt;
+  player.y += dy * player.speed * dt;
+
+  player.x = Math.max(5, Math.min(95, player.x));
+  player.y = Math.max(55, Math.min(94, player.y));
+
+  // Ball follows player until it is kicked
+  if (!ball.moving) {
+    ball.x = player.x;
+    ball.y = player.y - 6;
+  }
+}
+
+// ========================================
+// UPDATE BALL
+// ========================================
+
+function updateBall(dt) {
+  if (!ball.moving) return;
+
+  ball.x += ball.vx * dt;
+  ball.y += ball.vy * dt;
+
+  // Slightly slow down horizontal movement
+  ball.vx *= Math.pow(0.995, dt * 60);
+
+  // Defender blocks the shot
+  for (const d of defenders) {
+    if (
+      Math.abs(ball.x - d.x) < 5 &&
+      Math.abs(ball.y - d.y) < 4
+    ) {
+      ball.moving = false;
+      ball.x = player.x;
+      ball.y = player.y - 6;
+      message.textContent = "BLOCKED!";
+      setTimeout(() => {
+        if (running && !gameEnded && message.textContent === "BLOCKED!") {
+          message.textContent = "";
+        }
+      }, 650);
+      return;
+    }
+  }
+
+  // Goalkeeper tries to block shots near the goal
+  if (ball.y < 12) {
+    goalkeeper.x += (ball.x - goalkeeper.x) * 0.06;
+  }
+
+  if (ball.y <= 3) {
+    const insideGoal = ball.x > 38 && ball.x < 62;
+    const keeperSaved = Math.abs(ball.x - goalkeeper.x) < 5;
+
+    if (insideGoal && !keeperSaved) {
+      score++;
+      scoreText.textContent = score;
+
+      goalFlash = 1.2;
+      message.textContent = "⚽ GOAL!!!";
+    } else {
+      message.textContent = keeperSaved ? "SAVED!" : "WIDE!";
+    }
+
+    ball.moving = false;
+    ball.x = player.x;
+    ball.y = player.y - 6;
+
+    setTimeout(() => {
+      if (running && !gameEnded) {
+        message.textContent = "";
+      }
+    }, 900);
+  }
+
+  // Missed the pitch
+  if (ball.x < -10 || ball.x > 110 || ball.y < -5) {
+    ball.moving = false;
+    ball.x = player.x;
+    ball.y = player.y - 6;
+  }
+}
+
+// ========================================
+// UPDATE DEFENDERS
+// ========================================
+
+function updateDefenders(dt) {
+  defenders.forEach((d, i) => {
+    // Move defenders gently from side to side
+    d.x = d.homeX + Math.sin(elapsed * 1.5 + i * 2) * 7;
+
+    // A nearby defender moves toward the player
+    if (
+      !ball.moving &&
+      Math.abs(player.y - d.y) < 12 &&
+      Math.abs(player.x - d.x) < 20
+    ) {
+      d.x += Math.sign(player.x - d.x) * d.speed * dt;
+    }
+
+    d.x = Math.max(5, Math.min(95, d.x));
+  });
+}
+
+// ========================================
+// END GAME
+// ========================================
+
+function endGame() {
+  if (gameEnded) return;
+
+  gameEnded = true;
+  running = false;
+  message.textContent = "TIME UP!";
+  startButton.textContent = "↻ PLAY AGAIN";
+}
+
+// ========================================
+// DRAW EVERYTHING
+// ========================================
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  drawStadium();
+  drawField();
+  drawGoal();
+
+  // Sort characters by their y-coordinate so nearer players
+  // are drawn in front of farther players.
+  const actors = defenders.map(d => ({
+    y: d.y,
+    draw: () => drawPlayerModel(d.x, d.y, "#e34a43", null, 1.0)
+  }));
+
+  actors.push({
+    y: goalkeeper.y,
+    draw: drawGoalkeeper
+  });
+
+  actors.push({
+    y: player.y,
+    draw: () => {
+      const p = project(player.x, player.y);
+
+      // Selection ring
+      ctx.strokeStyle = "#54d9ff";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y + 2, 13, 6, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      drawPlayerModel(player.x, player.y, "#2477e8", "10", 1.15);
+    }
+  });
+
+  actors.sort((a, b) => a.y - b.y);
+  actors.forEach(a => a.draw());
+
+  drawBall();
+
+  // Goal flash
+  if (goalFlash > 0) {
+    ctx.fillStyle = `rgba(255, 230, 70, ${goalFlash * 0.2})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Game-over overlay
+  if (gameEnded) {
+    ctx.fillStyle = "rgba(5, 15, 30, 0.72)";
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = "#ffe45e";
+    ctx.font = "bold 48px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("FULL TIME!", W / 2, H / 2 - 25);
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 26px Arial";
+    ctx.fillText(`GOALS: ${score}`, W / 2, H / 2 + 25);
+  }
+}
+
+// ========================================
+// MAIN GAME LOOP
+// ========================================
+
+function gameLoop(timestamp) {
+  const dt = Math.min((timestamp - lastTime) / 1000 || 0, 0.05);
+  lastTime = timestamp;
+
+  if (running && !gameEnded) {
+    elapsed += dt;
+    timeLeft -= dt;
+    shotCooldown = Math.max(0, shotCooldown - dt);
+    goalFlash = Math.max(0, goalFlash - dt);
+
+    updatePlayer(dt);
+    updateBall(dt);
+    updateDefenders(dt);
+
+    timeText.textContent = Math.max(0, Math.ceil(timeLeft));
+
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      timeText.textContent = 0;
+      endGame();
+    }
+  }
+
+  draw();
+  requestAnimationFrame(gameLoop);
+}
+
+// ========================================
+// INPUT
+// ========================================
+
+document.addEventListener("keydown", function(event) {
+  const key = event.key;
+
+  if (
+    ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "]
+      .includes(key)
+  ) {
+    event.preventDefault();
+  }
+
+  keys[key] = true;
+
+  if (event.code === "Space") {
+    shoot();
+  }
+});
+
+document.addEventListener("keyup", function(event) {
+  keys[event.key] = false;
+});
+
+startButton.addEventListener("click", resetGame);
+
+// Initial screen
+draw();
+requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

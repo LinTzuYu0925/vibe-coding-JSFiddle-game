@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.zip
+.DS_Store
+Thumbs.db
+# asset/ is a separate clone of github.com/LinTzuYu0925/space_shooter (example asset repo for students)
+asset/
+CLAUDE.md
+.agents
+.claude

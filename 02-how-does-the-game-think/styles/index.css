@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+TC:wght@500;900&display=swap');
+
+:root { --neon: #5ef2ff; --pink: #ff5ea8; --yellow: #ffe45e; --green: #6dff8a; }
+
+.slidev-layout {
+  background: radial-gradient(circle at 20% 10%, #1a1f4d 0, #080b18 55%), #080b18;
+  color: #fff;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 500;
+  font-size: 1.6rem;
+  background-image:
+    radial-gradient(2px 2px at 10% 20%, #fff8, transparent),
+    radial-gradient(2px 2px at 70% 35%, #fff8, transparent),
+    radial-gradient(1px 1px at 40% 80%, #fff8, transparent),
+    radial-gradient(2px 2px at 90% 75%, #fff8, transparent),
+    radial-gradient(circle at 20% 10%, #1a1f4d 0, #080b18 55%);
+}
+.slidev-layout h1 {
+  font-family: 'Press Start 2P', 'Noto Sans TC', monospace;
+  font-size: 1.9rem; line-height: 1.5; color: var(--neon);
+  text-shadow: 0 0 12px #5ef2ff88; margin-bottom: 1rem;
+}
+.big { font-size: 3rem; font-weight: 900; line-height: 1.3; }
+.huge { font-size: 5rem; line-height: 1.2; }
+.q { color: var(--yellow); font-weight: 900; font-size: 2.2rem; }
+.neon { color: var(--neon); } .pink { color: var(--pink); }
+.yellow { color: var(--yellow); } .green { color: var(--green); }
+.center { text-align: center; }
+
+.box {
+  display: inline-block; min-width: 9rem; padding: .6rem 1rem; margin: .4rem;
+  border: 4px solid #fff; background: #0c1130; text-align: center;
+  box-shadow: 6px 6px 0 #000, 0 0 14px #5ef2ff44; image-rendering: pixelated;
+}
+.box small { display: block; font-family: 'Press Start 2P', monospace; font-size: .6rem; color: var(--neon); margin-bottom: .3rem; }
+.box b { font-size: 2rem; }
+.card { border: 4px solid var(--neon); background: #0c1130cc; padding: .6rem 1.2rem; margin: .5rem 0; box-shadow: 6px 6px 0 #000; }
+.card.pink { border-color: var(--pink); } .card.green { border-color: var(--green); } .card.yellow { border-color: var(--yellow); }
+.arrow { text-align: center; font-size: 2rem; color: var(--yellow); line-height: 1; margin: .2rem 0; }
+.row { display: flex; gap: 1.5rem; justify-content: center; align-items: stretch; flex-wrap: wrap; }
+.challenge { border: 4px dashed var(--yellow); padding: .8rem 1.5rem; background: #2a2208aa; }
+.tag { font-family: 'Press Start 2P', monospace; font-size: .8rem; color: #000; background: var(--yellow); padding: .3rem .6rem; display: inline-block; margin-bottom: .6rem; }
+.slidev-code-wrapper, .slidev-code { font-size: 1.15rem !important; }
+/* Slidev's goto dialog keeps its result list visible after closing if search text remains */
+#slidev-goto-dialog.\-top-20 .autocomplete-list { display: none; }
+
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: center; }
+.loc {
+  display: inline-block; font-family: 'Press Start 2P', monospace; font-size: .55rem;
+  color: #000; background: var(--neon); padding: .3rem .5rem; margin: .3rem 0;
+}
+.float { animation: bob 2s ease-in-out infinite; display: inline-block; }
+@keyframes bob { 50% { transform: translateY(-14px); } }
+.shoot { animation: shoot 1.2s linear infinite; display: inline-block; }
+@keyframes shoot { from { transform: translateX(0); opacity: 1; } to { transform: translateX(140px); opacity: .2; } }

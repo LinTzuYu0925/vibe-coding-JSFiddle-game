@@ -1,0 +1,14 @@
+{
+  "name": "vibe-coding-jsfiddle-game",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "[0-9][0-9]-*"
+  ],
+  "devDependencies": {
+    "@slidev/cli": "53.1.0",
+    "@slidev/theme-default": "0.25.0",
+    "playwright-chromium": "^1.63.0",
+    "vue": "^3.5.0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "how-does-a-game-think",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build",
+    "export": "slidev export",
+    "package": "slidev build && slidev export --with-clicks --output dist/slides"
+  }
+}
