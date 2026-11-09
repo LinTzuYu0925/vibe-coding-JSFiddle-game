@@ -1,7 +1,8 @@
 <script setup>
 // The teacher's fiddles for this class, as a clickable link.
 // ⚠️ TEACHER: this is the ONLY place to fill in. After creating each fiddle (see NOTES.md, prep checklist),
-//    write its address here without https://, e.g. 'jsfiddle.net/k3x9ab2q/0'. Empty = shows 「老師課前填入」.
+//    paste its address here, with or without https:// (both work), e.g. 'jsfiddle.net/k3x9ab2q/0'.
+//    Empty = shows 「老師課前填入」.
 const FIDDLES = {
   starter: 'https://jsfiddle.net/xmrywgej/', // 起始遊戲  (starter/memory-match-0.html)
   rescue1: 'https://jsfiddle.net/kzL0h58m/', // 救援 1：點一下就翻牌 (starter/rescue-1.html)
@@ -9,7 +10,8 @@ const FIDDLES = {
   rescue3: 'https://jsfiddle.net/jn9ermg7/1/', // 救援 3：完整版，也是第 2 頁老師玩的遊戲 (starter/rescue-3.html)
 }
 const props = defineProps({ k: { type: String, required: true } })
-const url = FIDDLES[props.k] ?? ''
+// strip any https:// and trailing slash, so the slide shows a short address and the link never doubles https://
+const url = (FIDDLES[props.k] ?? '').trim().replace(/^https?:\/\//i, '').replace(/\/+$/, '')
 </script>
 
 <template>
