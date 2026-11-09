@@ -6,7 +6,9 @@
     "[0-9][0-9]-*"
   ],
   "scripts": {
-    "build:site": "node scripts/build-site.mjs"
+    "build:site": "node scripts/build-site.mjs",
+    "check:deck": "node scripts/check-deck.mjs",
+    "check:zh": "node scripts/check-zh.mjs"
   },
   "devDependencies": {
     "@slidev/cli": "53.1.0",

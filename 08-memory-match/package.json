@@ -1,0 +1,13 @@
+{
+  "name": "memory-match",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build",
+    "export": "slidev export",
+    "export:png": "slidev export --format png --output dist/png --timeout 60000",
+    "starter": "node scripts/make-starter.mjs",
+    "shots": "node scripts/capture-shots.mjs"
+  }
+}

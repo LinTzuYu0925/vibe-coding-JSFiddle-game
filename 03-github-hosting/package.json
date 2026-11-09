@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "slidev --open",
     "build": "slidev build",
-    "export": "slidev export"
+    "export": "slidev export",
+    "export:png": "slidev export --format png --output dist/png --timeout 60000"
   }
 }

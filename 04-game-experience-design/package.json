@@ -6,6 +6,7 @@
     "dev": "slidev --open",
     "build": "slidev build",
     "export": "slidev export",
-    "shots": "node scripts/capture-shots.mjs"
+    "shots": "node scripts/capture-shots.mjs",
+    "export:png": "slidev export --format png --output dist/png --timeout 60000"
   }
 }

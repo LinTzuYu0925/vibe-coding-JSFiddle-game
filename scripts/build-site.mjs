@@ -1,6 +1,7 @@
 // Builds every deck into one static site for GitHub Pages:
-//   _site/index.html              course home page listing the decks
-//   _site/<deck folder>/          one Slidev build per deck
+//   _site/index.html              course home page listing the decks (student versions only)
+//   _site/<deck>/                 student version: no hostOnly slides, no speaker notes
+//   _site/teacher/<deck>/         teacher version: every slide, with speaker notes (unlisted)
 //
 // Run from the repo root: npm run build:site
 // The URL base comes from the repo name: GITHUB_REPOSITORY in GitHub Actions,
@@ -9,6 +10,21 @@ import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { parse } from '@slidev/parser'
+
+// Writes <deck>/slides.student.md: slides.md without the slides whose frontmatter has hostOnly: true.
+// Returns how many slides were removed. The file sits next to slides.md so components/ and public/ resolve.
+async function writeStudentEntry(dir) {
+  const src = path.join(dir, 'slides.md')
+  const md = fs.readFileSync(src, 'utf8').replace(/\r\n/g, '\n')
+  const { slides } = await parse(md, src)
+  const hidden = slides.filter(s => s.frontmatter?.hostOnly === true)
+  if (hidden.some(s => s.index === 0)) throw new Error(`${dir}: the first slide cannot be hostOnly`)
+  const lines = md.split('\n')
+  for (const s of [...hidden].reverse()) lines.splice(s.start, s.end - s.start)
+  fs.writeFileSync(path.join(dir, 'slides.student.md'), lines.join('\n'))
+  return hidden.length
+}
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const out = path.join(root, '_site')
@@ -25,11 +41,17 @@ fs.mkdirSync(out)
 
 const slidev = path.join(root, 'node_modules', '@slidev', 'cli', 'bin', 'slidev.mjs')
 const list = []
+const build = (dir, entry, base, outDir, extra = []) =>
+  execFileSync(process.execPath, [slidev, 'build', entry, '--base', base, '--out', outDir, '--router-mode', 'hash', ...extra],
+    { cwd: dir, stdio: 'inherit' })
 for (const d of decks) {
-  const base = `${siteBase}${d}/`
-  console.log(`\n▶ ${d}  →  ${base}`)
-  execFileSync(process.execPath, [slidev, 'build', '--base', base, '--out', path.join(out, d), '--router-mode', 'hash'],
-    { cwd: path.join(root, d), stdio: 'inherit' })
+  const dir = path.join(root, d)
+  console.log(`\n▶ ${d}  (teacher)  →  ${siteBase}teacher/${d}/`)
+  build(dir, 'slides.md', `${siteBase}teacher/${d}/`, path.join(out, 'teacher', d))
+  const removed = await writeStudentEntry(dir)
+  console.log(`\n▶ ${d}  (student, ${removed} hostOnly slide(s) removed, no notes)  →  ${siteBase}${d}/`)
+  try { build(dir, 'slides.student.md', `${siteBase}${d}/`, path.join(out, d), ['--without-notes']) }
+  finally { fs.rmSync(path.join(dir, 'slides.student.md'), { force: true }) }
   const head = fs.readFileSync(path.join(root, d, 'slides.md'), 'utf8').split(/^---\s*$/m)[1] ?? ''
   const title = head.match(/^title:\s*(.+)$/m)?.[1].trim() ?? d
   list.push({ n: Number(d.slice(0, 2)), dir: d, title })
