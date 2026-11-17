@@ -4,6 +4,10 @@
 //   starter/rescue-2.html          + right/wrong feedback, score, stars          (after STEP 2)
 //   starter/rescue-3.html          + 3 hearts, lose screen, replay               (after STEP 3 = finished version)
 //   starter/full-game.html         finished version with 10 台灣小知識, the first one wrong on purpose (slide 2)
+//   starter/challenge-hint.html    挑戰 A done: 💡 hint button removes two wrong answers (rescue 3 + the challenge)
+//   starter/challenge-boss.html    挑戰 B done: 🐉 boss with an HP bar, attacks, angry at half HP
+//   starter/challenge-map.html     挑戰 C steps 1–3 done: 🗺️ walk a map, three 🏰 stages, trees, 🎁 chest
+//   (challenge files: the teacher's proof that each challenge can be done, and the source of its screenshots)
 // To make a fiddle: paste the part under "CSS 窗格" into CSS, the <div id="game"> block into HTML,
 // and the part under "JavaScript 窗格" into JavaScript.
 // Run (repo root): npm run starter -w 09-quiz-adventure
@@ -31,6 +35,9 @@ const versions = {
   'rescue-3.html': read('js-3.js').replace('/*QUESTIONS*/', () => animals),
   'full-game.html': header(read('js-3.js'), '問答闖關：完整版（台灣小知識 10 題）')
     .replace('/*QUESTIONS*/', () => taiwan),
+  'challenge-hint.html': read('js-c-hint.js').replace('/*QUESTIONS*/', () => animals),
+  'challenge-boss.html': read('js-c-boss.js').replace('/*QUESTIONS*/', () => animals),
+  'challenge-map.html': read('js-c-map.js').replace('/*QUESTIONS*/', () => animals),
 }
 for (const [name, js] of Object.entries(versions)) {
   if (js.includes('/*QUESTIONS*/')) throw new Error(`${name}: question list not inserted`)

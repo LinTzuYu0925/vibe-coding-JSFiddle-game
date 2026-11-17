@@ -35,6 +35,18 @@
   Ids the AI needs (`answer`, `score`, `feedback`, `winScreen`, `stars`, `winText`, `correct`, `wrong`, `hearts`,
   `loseScreen`, `againBtn`, `hidden`, `maxHearts`) are written by the teacher in each prompt's context sentence.
 - 2026-11-17 (build) Added 第 27 頁 救援站 (⏱ 0); the next-class preview moved to 28 (hostOnly). Total still 90 min.
+- 2026-11-17 (author request) 挑戰站 for students who finish early, pages 28–41, all ⏱ 0 (total still 90; preview is now 42).
+  Three choices: A 💡 hint item ⭐ (1 step), B 🐉 boss fight ⭐⭐ (2 steps: HP bar and win condition; attack, angry face,
+  stars by hearts left), C 🗺️ adventure map ⭐⭐⭐ (4 steps: map + arrow keys + one 🏰 → original quiz; three 🏰 stages
+  with questions 1–3 / 4–6 / 7–10, ✅ when done, win after all three; map as data `mapRows` with trees and a 🎁 chest;
+  own idea, all four parts blank: key door, monster, portal, time limit). Each step is a 目標+檢查 page and a Prompt page
+  (C-4 is a prompt page with an idea card). Blanks stay at 4–6 with word banks and emoji banks because the features are
+  bigger than STEP 3; only C-4 is fully open. Everything is made by JavaScript (no HTML/CSS edits), so the course rule holds.
+  Placed after 救援站 so 第 27 頁 keeps its number; 第 22 頁 has a pointer card to 第 28 頁.
+  Challenge C overlaps class 10 (arrow keys, map as data) on purpose: it is a preview for fast finishers, and they can help
+  in class 10. Teacher proof games: `starter/challenge-hint.html`, `challenge-boss.html`, `challenge-map.html` (steps 1–3),
+  played by `npm run shots` (challenge checks added; all pass). Step 1–2 map pictures are 示意圖 made from the same game
+  with a simpler map.
 
 ## Glossary (reuse in later decks)
 | 中文 | English | How we say it to students |
@@ -52,6 +64,8 @@
 - [ ] Create the five fiddles from those files (each file marks the CSS, HTML and JavaScript pane contents), Save,
       write the URLs into `fiddles.json`, then push. Until then slides and notes show 「老師課前填入」.
 - [ ] Slide 12: ask an AI the STEP 1 prompt twice or more; keep one real problem question as the example
+- [x] 挑戰站 example games `starter/challenge-*.html` (play-tested). Optional: make fiddles of them to show the class.
+- [ ] Try the 挑戰 C-1 prompt once on a free AI: does it return the complete JS (the map version is about 280 lines)?
 - [ ] Classroom assignment 「第 9 堂：問答闖關」 with optional design-card box and optional 「我抓到的錯題：第＿題」
 - [x] Screenshots: real game captured by `scripts/capture-shots.mjs` (start, starter, rescue 1, right, wrong, hearts,
       win, lose, the full game's 雪山 question). Slide 7 shows the starter's lines 5–12 as code instead of a JSFiddle screenshot.
@@ -61,6 +75,8 @@
 |---|---|
 | Free ChatGPT / Gemini return the complete JS with 10 questions without "其餘不變" | check before class |
 | AI spreads the correct answer across the four positions when asked | check before class |
+| Arrow keys reach a JSFiddle result only after clicking inside the result frame (挑戰 C) | check before class |
+| Free AI returns the whole JS for the map challenge (≈280 lines) without "其餘不變" | check before class |
 | School laptops allow Google search | confirmed by the author 2026-11-17 |
 | 濁水溪 is Taiwan's longest river; 台北 101 is in 台北; 櫻花鉤吻鮭 is the 國寶魚; 澎湖 lies west of Taiwan; 台灣黑熊 has a V-shaped white chest mark | verified (common knowledge; used in the full game) |
 | Animal list (rescue 1–3): 藍鯨 largest animal, 海豚 mammal, spider 8 legs, insect 6 legs, giraffe neck 7 vertebrae, 企鵝 cannot fly, tadpole, panda eats bamboo, cheetah fastest on land, caterpillar | verified (common knowledge) |

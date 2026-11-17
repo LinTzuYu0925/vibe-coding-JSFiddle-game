@@ -836,6 +836,7 @@ STEP 3 卡住的學生：翻到第 27 頁，Fork 救援 3（完整版，題目�
   <div class="card pink" style="flex:1;margin:0">☝️ 只選<b>一個</b>，做完、玩過、存好，再選下一個</div>
 </div>
 <div class="card" style="margin-top:.6rem;font-size:1.05rem">🕵️ 請 AI 出<b>新題目</b>（第二輪、換主題）？→ 一樣要<b>抓錯題</b>（第 12 頁的四種錯）</div>
+<div class="card orange" style="margin-top:.5rem;font-size:1.05rem">🚀 做完、交了作業還有時間？→ 翻到<b>第 28 頁「挑戰站」</b>：💡 提示道具、🐉 魔王對決、🗺️ 冒險地圖</div>
 
 <!--
 ⏱ 2 分鐘。「用遊戲設計四個字想一想：你想改目標、規則、挑戰，還是回饋？選一個就好。」
@@ -1021,6 +1022,477 @@ STEP 3 卡住的學生：翻到第 27 頁，Fork 救援 3（完整版，題目�
 這一頁放在最後，學生網站也看得到，所以學生不會在 STEP 頁面上誤點救援連結，跑進別的遊戲。
 用法：「翻到第 27 頁，Fork 救援 2，再按 ☁️ Save。」確認他網址的遊戲編號已經變成自己的。
 下課後學生也可以在這一頁玩完整版。
+-->
+
+---
+
+# 挑戰站：做完了？選一個挑戰
+
+<div class="warn" style="font-size:1.05rem;margin-top:-.2rem;line-height:1.5">
+✅ STEP 3 做完、交了作業才來　·　開始前先 <b>☁️ Save</b>　·　<b>一步</b>做完、玩過、存好，才做下一步<br>
+😵 弄壞了？網址最後的<b>版本編號改小一號</b> → Enter，回到上一個好的版本
+</div>
+
+<div class="cmenu" style="margin-top:.7rem">
+  <div class="card yellow">
+    <div class="row" style="justify-content:space-between;margin:0"><b class="yellow" style="font-size:1.3rem">A 💡 提示道具</b><span>⭐</span></div>
+    <div class="shot fit" style="--h:7.4rem;margin:.4rem auto"><img src="/img/real-c-hint.png" alt="Hint button example"></div>
+    <div>按一下，刪掉兩個錯的答案</div>
+    <div class="go">1 步 · 第 29–30 頁</div>
+  </div>
+  <div class="card orange">
+    <div class="row" style="justify-content:space-between;margin:0"><b class="orange" style="font-size:1.3rem">B 🐉 魔王對決</b><span>⭐⭐</span></div>
+    <div class="shot fit" style="--h:7.4rem;margin:.4rem auto"><img src="/img/real-c-boss-angry.png" alt="Boss example"></div>
+    <div>答對打魔王，答錯魔王打你</div>
+    <div class="go">2 步 · 第 31–34 頁</div>
+  </div>
+  <div class="card pink">
+    <div class="row" style="justify-content:space-between;margin:0"><b class="pink" style="font-size:1.3rem">C 🗺️ 冒險地圖</b><span>⭐⭐⭐</span></div>
+    <div class="shot fit" style="--h:7.4rem;margin:.4rem auto"><img src="/img/real-c-map.png" alt="Adventure map example"></div>
+    <div>在地圖上走，走到 🏰 才闖關</div>
+    <div class="go">4 步 · 第 35–41 頁</div>
+  </div>
+</div>
+<div class="small" style="margin-top:.4rem">圖都是<b>真實畫面</b>（老師做的範例）· 挑戰做好、Save 了，在 Classroom 換成新的網址（第 25 頁）</div>
+
+<style>
+.cmenu { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
+.cmenu .card { margin: 0; display: flex; flex-direction: column; font-size: 1.05rem; text-align: center; }
+.cmenu .go { margin-top: .3rem; font-weight: 900; color: var(--neon); }
+</style>
+
+<!--
+⏱ 0 分鐘（不用上；給做完 STEP 3、交了作業、還有時間的同學，自己照頁碼往下做）。
+「做完的同學翻到第 28 頁挑戰站，選一個。⭐ 越多越難。」不知道選哪個：先做 A（一步就好），做完再挑 B 或 C。
+三個挑戰都只改 JavaScript：新的東西（提示按鈕、魔王、地圖）都請 AI 用 JavaScript 做出來，HTML 和 CSS 不用動。
+每個挑戰老師都做過一次（starter/challenge-hint.html、challenge-boss.html、challenge-map.html），確定做得出來；圖片是這些範例的真實畫面。
+程式越來越長（地圖做完約 280 行），免費 AI 可能會說「其餘不變」只給一半：程式變短很多就不要貼，回 AI 說「請給我完整的 JavaScript，一行都不要省略」。下一堂會教只換一段的貼法。
+挑戰 C 用方向鍵走地圖，下一堂（迷宮尋寶）會正式教；做過的同學下一堂可以當小幫手。
+做完挑戰要交新版本：Save → Classroom 按「取消繳交」→ 換新網址 → 再繳交。
+-->
+
+---
+
+# 挑戰 A：💡 提示道具
+
+<Step label="挑戰 A" kind="目標" actor="me" />
+
+<div class="cgoal">
+  <div class="shot fit" style="--h:17rem"><span class="label tag">真實畫面</span><img src="/img/real-c-hint.png" alt="Two wrong answers removed"></div>
+  <div>
+    <div class="card yellow"><b class="yellow">👀 會看到</b>：答案下面多一個<b>「💡 提示」</b>按鈕，按了<b>兩個錯的答案不見</b>，按鈕寫「剩幾次」</div>
+    <div class="card pink"><b class="pink">🚫 不能發生</b>：把<b>正確答案</b>藏起來；下一題答案<b>還是少兩個</b></div>
+    <div class="card green" style="margin-bottom:0"><b class="green">🔍 做完檢查</b>
+      <ul class="check">
+        <li>按提示：剩 2 個答案，正確的在裡面</li>
+        <li>下一題：4 個答案都回來</li>
+        <li>次數用完：按鈕變灰，按了沒反應</li>
+        <li>「再玩一次」：次數回來</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+這是最簡單的挑戰：一個新按鈕＋一條規則。用「遊戲設計四個字」說：提示是讓「挑戰」變簡單一點的道具，所以一局只能用幾次。
+做法跟 STEP 一樣：下一頁填好 Prompt → 貼程式 → 📋 複製 → 貼給 AI → JS 整段換掉 → 照這頁的 🔍 玩過 → ☁️ Save。
+AI 常見錯誤：下一題沒有把藏起來的答案放回來（答案越來越少）；「再玩一次」沒把次數加回來。用「我做了什麼＋看到什麼＋我期待什麼」告訴 AI。
+-->
+
+---
+
+# 挑戰 A：Prompt
+
+<Step label="挑戰 A" kind="Prompt" actor="me" />
+
+<div class="cols" style="grid-template-columns:3fr 2fr;margin-top:-.3rem">
+<PromptBox title="🤖 挑戰 A：提示道具">
+<p>我在 JSFiddle 做「問答闖關」遊戲，現在可以答題、看對錯、有分數、星星和三顆愛心，會贏也會輸。HTML 和 CSS 不要改，請只改 JavaScript。四個答案按鈕的 class 是 "answer"，它們外面的框 id 是 "answers"。</p>
+<p><b>① 加什麼：</b>一個「💡 提示」按鈕，用 JavaScript 做出來，放在四個答案下面。</p>
+<p><b>② 怎麼動：</b>按提示，這一題藏起<Ph pick="兩個|一個" />錯的答案（正確答案一定留著）。一局可以用<Ph number>幾</Ph>次，按鈕上寫還剩幾次；用完了按鈕變灰、按了沒反應。下一題四個答案都要回來。等下一題的時候不能按提示。「再玩一次」提示次數要回來。</p>
+<p><b>③ 不能弄壞：</b><Ph>哪些不能壞？</Ph>都要跟原本一樣。</p>
+<p><b>④ 怎麼檢查：</b>我會<Ph>怎麼檢查？</Ph></p>
+<p>請給我「完整」的 JavaScript，不要省略任何部分，並告訴我改了哪裡。</p>
+<p><Ph code>貼上 JSFiddle 最新的 JavaScript</Ph></p>
+</PromptBox>
+<div>
+  <div class="card pink fill cfill" style="margin-top:0"><b>✏️ 填 4 格</b><span class="small">　先點框框，再點字</span><br>
+    <span class="n">1</span>藏幾個：自己選　<span class="n">2</span>幾次：建議 <b>2</b><br>
+    <span class="n">3</span>不能壞的：
+    <Bank words="對錯回饋|分數|星星|愛心|再玩一次" />
+    <span class="n">4</span>怎麼檢查？
+    <Bank words="按提示看剩幾個答案|次數用完再按|按再玩一次看次數" />
+  </div>
+  <div class="card green" style="font-size:.95rem">🔍 <code>Ctrl+F</code> 搜尋 <code>提示</code>：找得到<br>再照第 29 頁玩一次</div>
+</div>
+</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+填空答案：① 兩個（一個也可以，都算對）② 幾次：1–3 都可以，建議 2 ③「對錯回饋、分數、星星、愛心、再玩一次」④「按提示看剩幾個答案、次數用完再按、按再玩一次看次數」。
+範例：starter/challenge-hint.html（老師做的，題目是動物）。
+如果按鈕跑到很奇怪的地方（例如畫面最上面）：告訴 AI「提示按鈕要放在四個答案按鈕下面、置中」。
+-->
+
+---
+
+# 挑戰 B-1 目標：魔王出現了
+
+<Step label="挑戰 B-1" kind="目標" actor="me" />
+
+<div class="cgoal">
+  <div class="shot fit" style="--h:17rem"><span class="label tag">真實畫面</span><img src="/img/real-c-boss.png" alt="Boss with full HP"></div>
+  <div>
+    <div class="card orange"><b class="orange">👀 會看到</b>：題目上面有<b>魔王</b>和<b>血條</b>。答對一題 → 魔王<b>少 1 滴血</b>、晃一下</div>
+    <div class="card win"><b class="c-win">🏆 新的勝利</b>：魔王<b>沒血了</b>就過關（不是答完 10 題）</div>
+    <div class="card green" style="margin-bottom:0"><b class="green">🔍 做完檢查</b>
+      <ul class="check">
+        <li>答對：血條變短、數字少 1</li>
+        <li>（先把血改成 <b>2</b>）答對 2 題 → 過關畫面</li>
+        <li>答錯：還是少一顆 ❤️</li>
+        <li>「再玩一次」：魔王血回滿；記得<b>改回來</b></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+「目標」改了：以前是「答完 10 題」，現在是「打倒魔王」。挑戰也變了：要在 3 顆愛心用完之前打倒魔王。
+測試小技巧又來了：魔王的血放在變數 bossMaxHp，Ctrl+F 找到它，先改成 2 測過關，測完改回來（跟 maxHearts 一樣）。
+魔王的血建議 5 到 8 滴：10 題裡最多答錯 2 題，所以至少答對 8 題，8 滴以下一定打得完。填 9 或 10 會很難。
+-->
+
+---
+
+# 挑戰 B-1 Prompt
+
+<Step label="挑戰 B-1" kind="Prompt" actor="me" />
+
+<div class="cols" style="grid-template-columns:3fr 2fr;margin-top:-.3rem">
+<PromptBox title="🤖 挑戰 B-1：魔王和血條">
+<p>我在 JSFiddle 做「問答闖關」遊戲，現在可以答題、看對錯、有分數、星星和三顆愛心，會贏也會輸。HTML 和 CSS 不要改，請只改 JavaScript。題目區的 id 是 "quiz"；CSS 有 class "shake" 可以讓東西晃一下；過關文字 id 是 "winText"，失敗文字 id 是 "loseText"。</p>
+<p><b>① 加什麼：</b>一隻魔王<Ph>魔王 emoji</Ph>和它的血條，用 JavaScript 做出來，放在題目上面。</p>
+<p><b>② 怎麼動：</b>魔王有<Ph number>幾</Ph>滴血，放在程式最上面的變數 bossMaxHp。答對一題，魔王少 1 滴血、晃一下，血條變短，旁邊寫「血 6 / 7」。過關的條件改成<Ph pick="魔王沒血了|答完 10 題" answer="魔王沒血了" />，過關文字寫「你打倒魔王了！」。題目答完魔王還有血，就顯示失敗畫面「魔王逃走了」。答錯一樣少一顆愛心。「再玩一次」魔王的血回滿。</p>
+<p><b>③ 不能弄壞：</b><Ph>哪些不能壞？</Ph>都要跟原本一樣。</p>
+<p><b>④ 怎麼檢查：</b>我會<Ph>怎麼檢查？</Ph></p>
+<p>請給我「完整」的 JavaScript，不要省略任何部分，並告訴我改了哪裡。</p>
+<p><Ph code>貼上 JSFiddle 最新的 JavaScript</Ph></p>
+</PromptBox>
+<div>
+  <div class="card pink fill cfill" style="margin-top:0"><b>✏️ 填 5 格</b><span class="small">　先點框框，再點字</span><br>
+    <span class="n">1</span>魔王：
+    <Bank words="🐉|👾|🦖|👻|🤖" />
+    <span class="n">2</span>幾滴血：<b>5 到 8</b>　<span class="n">3</span>看第 31 頁<br>
+    <span class="n">4</span>不能壞的：
+    <Bank words="對錯回饋|分數|愛心|失敗畫面|再玩一次" />
+    <span class="n">5</span>怎麼檢查？
+    <Bank words="先把血改成 2 測過關|故意答錯一題|按再玩一次" />
+  </div>
+  <div class="card green" style="font-size:.95rem">🔍 <code>Ctrl+F</code> 搜尋 <code>bossMaxHp</code>：找得到</div>
+</div>
+</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+填空答案：① 任一個 emoji ② 5–8 ③ 魔王沒血了 ④「對錯回饋、分數、愛心、失敗畫面、再玩一次」⑤「先把血改成 2 測過關、故意答錯一題、按再玩一次」。
+③ 選錯「答完 10 題」會變橘色：魔王就沒有意義了。
+AI 常見錯誤：魔王沒血了還要答完 10 題才過關（過關判斷沒改）；「再玩一次」魔王的血沒回滿；血條沒有變短（只有數字變）。
+範例：starter/challenge-boss.html（B-1 和 B-2 都做完的樣子）。
+-->
+
+---
+
+# 挑戰 B-2 目標：魔王會反擊
+
+<Step label="挑戰 B-2" kind="目標" actor="me" />
+
+<div class="cgoal">
+  <div class="row" style="flex-wrap:nowrap;gap:.6rem;margin:0">
+    <div class="shot fit" style="--h:12.5rem;border-color:var(--c-lose)"><span class="label tag" style="background:var(--c-lose)">答錯</span><img src="/img/real-c-boss-attack.png" alt="Boss attacks"></div>
+    <div class="shot fit" style="--h:12.5rem;border-color:var(--orange)"><span class="label tag" style="background:var(--orange)">剩一半</span><img src="/img/real-c-boss-angry.png" alt="Boss angry"></div>
+  </div>
+  <div>
+    <div class="card pink"><b class="pink">🔥 答錯</b>：魔王攻擊！畫面<b>閃紅光</b>，少一顆 ❤️</div>
+    <div class="card orange"><b class="orange">😡 剩一半血</b>：魔王<b>變臉</b>、寫「魔王生氣了！」</div>
+    <div class="card green" style="margin-bottom:0"><b class="green">🔍 做完檢查</b>
+      <ul class="check">
+        <li>故意答錯：看到攻擊</li>
+        <li>打到一半：魔王變臉</li>
+        <li>過關星星 = 剩幾顆 ❤️</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="small" style="margin-top:.4rem">兩張都是<b>真實畫面</b>（老師做的範例）</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+這一步全是「回饋」：答錯時遊戲用畫面告訴你「被打了」，魔王剩一半時告訴你「快贏了」。
+星星改成看剩幾顆愛心：3 顆愛心 ⭐⭐⭐、2 顆 ⭐⭐、1 顆 ⭐。魔王對決裡「沒被打到」比「答對幾題」更重要。
+AI 常見錯誤：攻擊的 🔥 一直留著沒變回魔王；生氣後「再玩一次」魔王還是生氣的臉。
+-->
+
+---
+
+# 挑戰 B-2 Prompt
+
+<Step label="挑戰 B-2" kind="Prompt" actor="me" />
+
+<div class="cols" style="grid-template-columns:3fr 2fr;margin-top:-.3rem">
+<PromptBox title="🤖 挑戰 B-2：魔王反擊、生氣">
+<p>我在 JSFiddle 做「問答闖關」遊戲，現在有一隻魔王和血條：答對打魔王，魔王沒血就過關。HTML 和 CSS 不要改，請只改 JavaScript。整個遊戲的外框 id 是 "game"。</p>
+<p><b>① 加什麼：</b>魔王會反擊，還會生氣。</p>
+<p><b>② 怎麼動：</b>答錯的時候魔王攻擊：魔王變成<Ph>攻擊 emoji</Ph>0.5 秒，遊戲外框<Ph pick="閃紅光|晃一下" />，我少一顆愛心。魔王剩<Ph pick="一半|三分之一" />的血以下，就換成<Ph>生氣 emoji</Ph>，名字旁邊寫「魔王生氣了！」。過關畫面的星星改成看剩幾顆愛心：3 顆 ⭐⭐⭐、2 顆 ⭐⭐、1 顆 ⭐。</p>
+<p><b>③ 不能弄壞：</b><Ph>哪些不能壞？</Ph>都要跟原本一樣。</p>
+<p><b>④ 怎麼檢查：</b>我會<Ph>怎麼檢查？</Ph></p>
+<p>請給我「完整」的 JavaScript，不要省略任何部分，並告訴我改了哪裡。</p>
+<p><Ph code>貼上 JSFiddle 最新的 JavaScript</Ph></p>
+</PromptBox>
+<div>
+  <div class="card pink fill cfill" style="margin-top:0"><b>✏️ 填 6 格</b><span class="small">　先點框框，再點字</span><br>
+    <span class="n">1</span>攻擊：<Bank words="🔥|⚡|💥|☄️" />
+    <span class="n">2</span><span class="n">3</span>自己選<br>
+    <span class="n">4</span>生氣：<Bank words="👹|😡|💢|👿" />
+    <span class="n">5</span>不能壞的：
+    <Bank words="魔王血條|答對打魔王|過關和失敗|再玩一次" />
+    <span class="n">6</span>怎麼檢查？
+    <Bank words="故意答錯一題|打到剩一半|看星星對不對" />
+  </div>
+  <div class="card green" style="font-size:.95rem">🔍 <code>Ctrl+F</code> 搜尋 <code>生氣</code>：找得到</div>
+</div>
+</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+填空答案：① ③ 任一個 emoji ② ③ 兩個都可以（自己選）⑤「魔王血條、答對打魔王、過關和失敗、再玩一次」⑥「故意答錯一題、打到剩一半、看星星對不對」。
+「再玩一次」之後魔王要變回原本的臉：如果還是生氣的臉，告訴 AI「我按再玩一次，魔王還是 😡，我期待它變回原本的樣子」。
+-->
+
+---
+
+# 挑戰 C-1 目標：地圖和走路
+
+<Step label="挑戰 C-1" kind="目標" actor="me" />
+
+<div class="cgoal">
+  <div class="shot fit" style="--h:16.5rem"><span class="label tag">示意圖</span><img src="/img/mock-c-step1.png" alt="Map with a player and one castle"></div>
+  <div>
+    <div class="card pink"><b class="pink">👀 會看到</b>：按開始先出現<b>地圖</b>，你是 🧙，用<b>方向鍵</b>走一格一格</div>
+    <div class="card yellow"><b class="yellow">🏰 走到城堡</b>：地圖不見，開始答題（跟原本一樣）</div>
+    <div class="card green" style="margin-bottom:0"><b class="green">🔍 做完檢查</b>
+      <ul class="check">
+        <li>先<b>用滑鼠點一下遊戲</b>，再按方向鍵</li>
+        <li>走到邊邊再按：<b>走不出去</b></li>
+        <li>走到 🏰：出現第 1 題</li>
+        <li>贏、輸、再玩一次都還可以</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。挑戰 C 有四步，每一步做完都是一個能玩的遊戲：先有地圖，再分成三關，再加樹和寶箱，最後加自己的點子。
+這一步：地圖只有一座 🏰，走到就開始原本的 10 題。左圖是示意圖（用老師的範例改簡單的地圖拍的）。
+最常卡住：方向鍵沒反應。JSFiddle 的遊戲在右下角的框裡，要先用滑鼠點一下遊戲（或按「開始」），框框才收得到按鍵。
+方向鍵讓整個網頁上下捲動：告訴 AI「按方向鍵時網頁不要捲動」（Prompt 裡已經寫了）。
+-->
+
+---
+
+# 挑戰 C-1 Prompt
+
+<Step label="挑戰 C-1" kind="Prompt" actor="me" />
+
+<div class="cols" style="grid-template-columns:3fr 2fr;margin-top:-.3rem">
+<PromptBox title="🤖 挑戰 C-1：地圖和走路">
+<p>我在 JSFiddle 做「問答闖關」遊戲，現在可以答題、看對錯、有分數、星星和三顆愛心，會贏也會輸。HTML 和 CSS 不要改，請只改 JavaScript。題目區的 id 是 "quiz"。</p>
+<p><b>① 加什麼：</b>一張冒險地圖，用 JavaScript 做出來，放在題目區前面。</p>
+<p><b>② 怎麼動：</b>按「開始」先出現地圖，題目區藏起來。地圖是<Ph number>寬</Ph>格寬、<Ph number>高</Ph>格高的格子，玩家是<Ph>玩家 emoji</Ph>，從左上角出發。方向鍵一次走一格，不能走出地圖，按方向鍵時網頁不要捲動。地圖上有一個 🏰，走到 🏰 就藏起地圖、顯示題目，從第 1 題開始答。「再玩一次」回到地圖的起點。</p>
+<p><b>③ 不能弄壞：</b><Ph>哪些不能壞？</Ph>都要跟原本一樣。</p>
+<p><b>④ 怎麼檢查：</b>我會<Ph>怎麼檢查？</Ph></p>
+<p>請給我「完整」的 JavaScript，不要省略任何部分，並告訴我改了哪裡。</p>
+<p><Ph code>貼上 JSFiddle 最新的 JavaScript</Ph></p>
+</PromptBox>
+<div>
+  <div class="card pink fill cfill" style="margin-top:0"><b>✏️ 填 5 格</b><span class="small">　先點框框，再點字</span><br>
+    <span class="n">1</span><span class="n">2</span>寬、高：建議 <b>8</b> 和 <b>6</b><br>
+    <span class="n">3</span>玩家：<Bank words="🧙|🦸|🐱|🤖|🐸" />
+    <span class="n">4</span>不能壞的：
+    <Bank words="答題|對錯回饋|分數|愛心|過關和失敗|再玩一次" />
+    <span class="n">5</span>怎麼檢查？
+    <Bank words="走到邊邊再按|走到城堡看題目|按再玩一次" />
+  </div>
+  <div class="card green" style="font-size:.95rem">🔍 <code>Ctrl+F</code> 搜尋 <code>ArrowUp</code>：找得到（↑ 鍵）</div>
+</div>
+</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+填空答案：① 8 ② 6（太大會擠出遊戲框，寬 10、高 8 以內都可以）③ 任一個 emoji ④「答題、對錯回饋、分數、愛心、過關和失敗、再玩一次」⑤「走到邊邊再按、走到城堡看題目、按再玩一次」。
+ArrowUp 是「↑ 鍵」在程式裡的名字；找得到代表 AI 有寫方向鍵。
+AI 常見錯誤：開始畫面還沒按就能走；題目和地圖同時出現；「再玩一次」直接出現題目，不是地圖。
+-->
+
+---
+
+# 挑戰 C-2 目標：三座城堡、三關
+
+<Step label="挑戰 C-2" kind="目標" actor="me" />
+
+<div class="cgoal">
+  <div class="row" style="flex-wrap:nowrap;gap:.6rem;margin:0">
+    <div class="shot fit" style="--h:12rem"><span class="label tag">示意圖</span><img src="/img/mock-c-step2.png" alt="Map with three castles"></div>
+    <div class="shot fit" style="--h:12rem"><span class="label tag">真實畫面</span><img src="/img/real-c-stage.png" alt="Stage 1 question"></div>
+  </div>
+  <div>
+    <div class="card pink"><b class="pink">🏰 三關</b>：第 1 關考第 1–3 題、第 2 關 4–6 題、第 3 關 7–10 題</div>
+    <div class="card yellow"><b class="yellow">✅ 過一關</b>：回到地圖，城堡變 ✅，不能再進去</div>
+    <div class="card win" style="margin-bottom:0"><b class="c-win">🏆 三關都過</b>才過關；愛心用完一樣輸</div>
+  </div>
+</div>
+<div class="card green" style="margin-top:.5rem;font-size:1rem">🔍 做完檢查：過一關 → 回到地圖、城堡變 ✅ · 再走上去 → 不會再答 · 三關都過 → 過關畫面 · 故意答錯 3 題 → 失敗畫面</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+題目清單還是同一份 10 題（資料不用改），只是規則改成「哪一座城堡考哪幾題」。
+左上角的標題變成「🏰 第 1 關」、題號變成「第 1 / 3 題」：讓玩家知道在哪一關、還剩幾題，這也是回饋。
+左圖是示意圖（範例遊戲換成沒有樹的地圖拍的），右圖是範例的真實畫面。
+AI 常見錯誤：過一關之後回到起點（應該站在原地）；站在 ✅ 上又開始答同一關；第 3 關只考 3 題，少了第 10 題。
+-->
+
+---
+
+# 挑戰 C-2 Prompt
+
+<Step label="挑戰 C-2" kind="Prompt" actor="me" />
+
+<div class="cols" style="grid-template-columns:3fr 2fr;margin-top:-.3rem">
+<PromptBox title="🤖 挑戰 C-2：三座城堡">
+<p>我在 JSFiddle 做「問答闖關」遊戲，現在按開始會出現地圖，走到 🏰 就開始答題。HTML 和 CSS 不要改，請只改 JavaScript。</p>
+<p><b>① 加什麼：</b>地圖上改成三座 🏰，每一座是一關，考不同的題目。</p>
+<p><b>② 怎麼動：</b>第 1 關考第 1–3 題，第 2 關 4–6 題，第 3 關 7–10 題。走到還沒過的 🏰 就答那一關：左上角標題（class "brand"）寫「🏰 第 1 關」，題號寫「第 1 / 3 題」。一關答完回到地圖、站在原地，那座 🏰 變成<Ph>過關 emoji</Ph>，不能再進去。<Ph pick="三關都過了|過一關" answer="三關都過了" />才顯示過關畫面。愛心用完就<Ph pick="顯示失敗畫面|回到地圖" answer="顯示失敗畫面" />。「再玩一次」回到起點，三座 🏰 都恢復。</p>
+<p><b>③ 不能弄壞：</b><Ph>哪些不能壞？</Ph>都要跟原本一樣。</p>
+<p><b>④ 怎麼檢查：</b>我會<Ph>怎麼檢查？</Ph></p>
+<p>請給我「完整」的 JavaScript，不要省略任何部分，並告訴我改了哪裡。</p>
+<p><Ph code>貼上 JSFiddle 最新的 JavaScript</Ph></p>
+</PromptBox>
+<div>
+  <div class="card pink fill cfill" style="margin-top:0"><b>✏️ 填 5 格</b><span class="small">　先點框框，再點字</span><br>
+    <span class="n">1</span>過關：<Bank words="✅|🚩|⭐|🏳️" />
+    <span class="n">2</span><span class="n">3</span>看第 37 頁<br>
+    <span class="n">4</span>不能壞的：
+    <Bank words="地圖和走路|對錯回饋|分數|愛心|再玩一次" />
+    <span class="n">5</span>怎麼檢查？
+    <Bank words="過一關看回到地圖|走回 ✅ 上面|三關都過|故意答錯 3 題" />
+  </div>
+  <div class="card green" style="font-size:.95rem">🔍 <code>Ctrl+F</code> 搜尋 <code>brand</code>：找得到（左上角標題）</div>
+</div>
+</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+填空答案：① 任一個 emoji ② 三關都過了 ③ 顯示失敗畫面 ④「地圖和走路、對錯回饋、分數、愛心、再玩一次」⑤「過一關看回到地圖、走回 ✅ 上面、三關都過、故意答錯 3 題」。
+測三關很花時間：可以請夥伴當玩家，自己看清單。
+這一步的程式最容易變長，AI 給的程式比原本短很多就先不要貼（看第 28 頁的提醒）。
+-->
+
+---
+
+# 挑戰 C-3 目標：地圖也是資料
+
+<Step label="挑戰 C-3" kind="目標" actor="me" />
+
+<div class="cgoal">
+  <div class="shot fit" style="--h:16.5rem"><span class="label tag">真實畫面</span><img src="/img/real-c-map.png" alt="Map with trees and a chest"></div>
+  <div>
+    <div class="card pink"><b class="pink">🌲 樹</b>：走不過去，要繞路　<b class="yellow">🎁 寶箱</b>：愛心 +1</div>
+    <div class="card yellow" style="font-family:monospace;font-size:1.02rem;line-height:1.35"><b style="font-family:inherit">🗺️ 地圖寫成一張清單</b>（示意）<br>
+      "P..#...."<br>".#.#.1#."<br>"..##.#.2"<br>"3#..G..."
+    </div>
+    <div class="card" style="margin-bottom:0;font-size:1rem">P 起點　1 2 3 城堡　# 樹　G 寶箱　. 空地<br>跟題目清單一樣：<b>改清單，地圖就變</b></div>
+  </div>
+</div>
+<div class="card green" style="margin-top:.5rem;font-size:1rem">🔍 做完檢查：撞樹 → 走不過去 · 撿寶箱 → ❤️ 回來一顆 · 三座城堡都走得到 · <code>Ctrl+F</code> <code>mapRows</code>，把一個 <code>.</code> 改成 <code>#</code> → Run → 多一棵樹</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+這一步的重點是「地圖也是資料」：跟今天第 7 頁的題目清單一樣，地圖寫成一張清單，規則（怎麼走、撞到樹）不用改，改清單就換一張地圖。下一堂迷宮尋寶就用這個想法。
+學生可以自己改地圖：Ctrl+F 找 mapRows，把「.」改成「#」多一棵樹（只改一個字，不要刪掉引號和逗號）。
+如果改了之後有城堡被樹圍住走不到：再改回「.」。寶箱：愛心最多 3 顆，滿的時候撿了不會變 4 顆。
+-->
+
+---
+
+# 挑戰 C-3 Prompt
+
+<Step label="挑戰 C-3" kind="Prompt" actor="me" />
+
+<div class="cols" style="grid-template-columns:3fr 2fr;margin-top:-.3rem">
+<PromptBox title="🤖 挑戰 C-3：樹和寶箱">
+<p>我在 JSFiddle 做「問答闖關」遊戲，現在有一張地圖，用方向鍵走，走到三座 🏰 分別答三關的題目。HTML 和 CSS 不要改，請只改 JavaScript。</p>
+<p><b>① 加什麼：</b>地圖上加 🌲 樹和一個寶箱<Ph>寶箱 emoji</Ph>。</p>
+<p><b>② 怎麼動：</b>請把地圖寫成程式最上面的一張清單 mapRows，每一行是一個字串：P 是起點、1 2 3 是三座 🏰、# 是樹、G 是寶箱、. 是空地，這樣我可以自己改地圖。樹大約<Ph number>幾</Ph>棵，樹走不過去，但每一座 🏰 都要走得到。走到寶箱，愛心<Ph pick="+1|+2" />（最多 3 顆），寶箱就不見。「再玩一次」寶箱回來。</p>
+<p><b>③ 不能弄壞：</b><Ph>哪些不能壞？</Ph>都要跟原本一樣。</p>
+<p><b>④ 怎麼檢查：</b>我會<Ph>怎麼檢查？</Ph></p>
+<p>請給我「完整」的 JavaScript，不要省略任何部分，並告訴我改了哪裡。</p>
+<p><Ph code>貼上 JSFiddle 最新的 JavaScript</Ph></p>
+</PromptBox>
+<div>
+  <div class="card pink fill cfill" style="margin-top:0"><b>✏️ 填 5 格</b><span class="small">　先點框框，再點字</span><br>
+    <span class="n">1</span>寶箱：<Bank words="🎁|💎|🍎|🧪" />
+    <span class="n">2</span>幾棵樹：建議 <b>10</b>　<span class="n">3</span>自己選<br>
+    <span class="n">4</span>不能壞的：
+    <Bank words="地圖和走路|三關|對錯回饋|愛心|過關和失敗|再玩一次" />
+    <span class="n">5</span>怎麼檢查？
+    <Bank words="去撞樹|答錯再撿寶箱|三座城堡都走一次" />
+  </div>
+  <div class="card green" style="font-size:.95rem">🔍 <code>Ctrl+F</code> 搜尋 <code>mapRows</code>：找得到一張清單</div>
+</div>
+</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。
+填空答案：① 任一個 emoji ② 8–12 ③ 自己選 ④「地圖和走路、三關、對錯回饋、愛心、過關和失敗、再玩一次」⑤「去撞樹、答錯再撿寶箱、三座城堡都走一次」。
+AI 常見錯誤：樹把城堡圍住走不到（請學生自己改 mapRows，或告訴 AI「第 3 座城堡走不到」）；寶箱撿了愛心變成 4 顆。
+-->
+
+---
+
+# 挑戰 C-4：加上我的點子
+
+<Step label="挑戰 C-4" kind="Prompt" actor="me" />
+
+<div class="cols" style="grid-template-columns:3fr 2fr;margin-top:-.3rem">
+<PromptBox title="🤖 挑戰 C-4：我的地圖點子">
+<p>我在 JSFiddle 做「問答闖關」遊戲，現在有一張地圖 mapRows（P 起點、1 2 3 城堡、# 樹、G 寶箱），用方向鍵走，走到三座 🏰 答三關的題目。HTML 和 CSS 不要改，請只改 JavaScript。</p>
+<p><b>① 加什麼：</b><Ph>我要加的東西</Ph></p>
+<p><b>② 怎麼動：</b><Ph>它怎麼動？數字是多少？</Ph></p>
+<p><b>③ 不能弄壞：</b><Ph>哪些已經做好、不能壞？</Ph></p>
+<p><b>④ 怎麼檢查：</b>我會<Ph>怎麼玩來檢查？</Ph></p>
+<p>請給我「完整」的 JavaScript，不要省略任何部分，並告訴我改了哪裡。</p>
+<p><Ph code>貼上 JSFiddle 最新的 JavaScript</Ph></p>
+</PromptBox>
+<div>
+  <div class="card yellow" style="margin-top:0;font-size:.98rem;line-height:1.4"><b>💡 選一個點子</b><br>
+    🔑 <b>鑰匙門</b>：先撿到 🔑，第 3 座城堡才進得去<br>
+    👻 <b>怪物</b>：每 1 秒走一格，碰到少一顆 ❤️<br>
+    🌀 <b>傳送門</b>：走進一個，從另一個出來<br>
+    ⏱ <b>限時</b>：60 秒內三關都要過
+  </div>
+  <div class="card" style="font-size:.95rem"><b>寫 ② 的時候想一想</b>：在地圖上用<b>哪個字母</b>？碰到會怎樣？數字多少？</div>
+  <div class="card pink" style="font-size:.98rem">一次只加<b>一個</b>　玩過才 <b>☁️ Save</b></div>
+</div>
+</div>
+
+<!--
+⏱ 0 分鐘（挑戰站，自己做）。最後一步沒有填空，四格自己寫（跟第 23 頁一樣），右邊只有點子。
+老師心裡的範例（學生卡住再說）：
+① 一把鑰匙 🔑 ② 在 mapRows 用 K 代表鑰匙；還沒撿到鑰匙時，第 3 座城堡走不進去，地圖下面寫「需要 🔑」；撿到鑰匙後上方顯示 🔑 ③ 地圖、三關、樹、寶箱、愛心、再玩一次 ④ 我會先去第 3 座城堡，再去撿鑰匙。
+👻 怪物最難：要用計時器讓它自己走，答題的時候怪物要停下來（提醒學生寫進 ②）。
+⏱ 限時：上方的 ⏱（id "timer"，外框 id "timerStat"）HTML 已經有，藏在 class "hidden" 裡；要把這兩個名字寫進 Prompt。
+做完的同學請他在「分享」時展示，或下一堂迷宮尋寶當小幫手。
 -->
 
 ---

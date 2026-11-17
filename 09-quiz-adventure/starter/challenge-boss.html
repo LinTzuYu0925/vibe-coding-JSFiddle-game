@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>問答闖關</title>
+  <style>
+/* ===== CSS 窗格 ===== */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 16px;
+  background: #10182b;
+  font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+
+#game {
+  position: relative;
+  width: min(100%, 560px);
+  min-height: 460px;
+  background: #17243a;
+  border: 3px solid #344968;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 50px #0008;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: linear-gradient(90deg, #10233c, #1e4260);
+}
+.brand { font-size: 22px; font-weight: 900; color: #65f3d1; }
+.stat { font-weight: bold; color: #c8d8ef; }
+.stat b { color: #ffe45e; font-size: 22px; }
+#hearts { font-size: 22px; letter-spacing: 2px; }
+
+#quiz { padding: 22px 22px 18px; }
+.progress { color: #c8d8ef; font-weight: bold; }
+.progress b { color: #ffe45e; }
+
+/* 題目 */
+#question {
+  margin: 10px 0 18px;
+  min-height: 72px;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+/* 四個答案按鈕 */
+#answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.answer {
+  padding: 16px 10px;
+  font-size: 22px;
+  font-weight: 900;
+  color: white;
+  background: linear-gradient(135deg, #3b5bdb, #5f3dc4);
+  border: 3px solid #91a7ff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform .15s, background .2s;
+}
+.answer:hover { transform: translateY(-3px); }
+
+/* 答對的按鈕（JS 加上 class "correct"） */
+.answer.correct { background: #2b8a3e; border-color: #8ce99a; }
+/* 答錯的按鈕（JS 加上 class "wrong"） */
+.answer.wrong { background: #c92a2a; border-color: #ffa8a8; }
+/* 可以加上 class "shake" 讓按鈕晃一下 */
+.shake { animation: shake .4s; }
+@keyframes shake {
+  25% { translate: -6px 0; }
+  75% { translate: 6px 0; }
+}
+
+/* 答完一題的回饋文字，例如「✔ 答對了！」 */
+#feedback {
+  margin-top: 16px;
+  min-height: 34px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 900;
+}
+#feedback.good { color: #8ce99a; }
+#feedback.bad { color: #ffa8a8; }
+
+/* 開始、勝利、失敗畫面 */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  background: #0b1222f0;
+}
+.overlay h1 { margin: 0; font-size: 44px; }
+.overlay p { margin: 0; font-size: 20px; color: #c8d8ef; }
+#startScreen h1 { color: #74c0fc; }
+#winScreen h1 { color: #ffa94d; }
+#loseScreen h1 { color: #ff6b6b; }
+#stars { font-size: 52px; letter-spacing: 6px; min-height: 64px; }
+
+.overlay button {
+  margin-top: 12px;
+  padding: 12px 34px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #10182b;
+  background: linear-gradient(#fff36b, #ffc940);
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 5px 0 #c08a00;
+  cursor: pointer;
+}
+
+.hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<!-- ===== HTML 窗格 ===== -->
+<div id="game">
+  <div class="topbar">
+    <span class="brand">❓ 問答闖關</span>
+    <span id="timerStat" class="stat hidden">⏱ <b id="timer">10</b></span>
+    <span class="stat">分數 <b id="score">0</b></span>
+    <span id="hearts">❤️❤️❤️</span>
+  </div>
+
+  <div id="quiz">
+    <div class="progress">第 <b id="qNum">1</b> / <b id="qTotal">3</b> 題</div>
+    <div id="question">題目</div>
+    <div id="answers">
+      <button class="answer">A</button>
+      <button class="answer">B</button>
+      <button class="answer">C</button>
+      <button class="answer">D</button>
+    </div>
+    <div id="feedback"></div>
+  </div>
+
+  <div id="startScreen" class="overlay">
+    <h1>❓ 問答闖關</h1>
+    <p>每一題選一個答案</p>
+    <p>全部答完就過關！</p>
+    <button id="startBtn">▶ 開始</button>
+  </div>
+
+  <div id="winScreen" class="overlay hidden">
+    <h1>🏆 過關了！</h1>
+    <div id="stars"></div>
+    <p id="winText">你答完了所有題目！</p>
+    <button class="againBtn">↻ 再玩一次</button>
+  </div>
+
+  <div id="loseScreen" class="overlay hidden">
+    <h1>💔 愛心用完了</h1>
+    <p id="loseText">再試一次吧！</p>
+    <button class="againBtn">↻ 再玩一次</button>
+  </div>
+</div>
+
+  <script>
+/* ===== JavaScript 窗格 ===== */
+// ===== 問答闖關：挑戰 B 範例（🐉 魔王對決：血條、攻擊、生氣）=====
+
+// ===== 題目清單（資料）=====
+// 每一題有：question 題目、choices 四個選項、answer 正確答案
+const questions = [
+  {
+    question: "世界上最大的動物是什麼？",
+    choices: ["大象", "藍鯨", "長頸鹿", "鯊魚"],
+    answer: "藍鯨"
+  },
+  {
+    question: "下面哪一種動物是哺乳類？",
+    choices: ["海豚", "鯊魚", "鮭魚", "鯉魚"],
+    answer: "海豚"
+  },
+  {
+    question: "蜘蛛有幾隻腳？",
+    choices: ["6 隻", "8 隻", "10 隻", "4 隻"],
+    answer: "8 隻"
+  },
+  {
+    question: "昆蟲有幾隻腳？",
+    choices: ["4 隻", "8 隻", "10 隻", "6 隻"],
+    answer: "6 隻"
+  },
+  {
+    question: "長頸鹿的脖子有幾節骨頭？",
+    choices: ["7 節", "20 節", "3 節", "50 節"],
+    answer: "7 節"
+  },
+  {
+    question: "下面哪一種鳥不會飛？",
+    choices: ["麻雀", "老鷹", "企鵝", "鴿子"],
+    answer: "企鵝"
+  },
+  {
+    question: "青蛙小時候叫什麼？",
+    choices: ["毛毛蟲", "蝌蚪", "小魚", "孑孓"],
+    answer: "蝌蚪"
+  },
+  {
+    question: "大貓熊最喜歡吃什麼？",
+    choices: ["竹子", "香蕉", "魚", "胡蘿蔔"],
+    answer: "竹子"
+  },
+  {
+    question: "陸地上跑最快的動物是什麼？",
+    choices: ["獅子", "馬", "獵豹", "兔子"],
+    answer: "獵豹"
+  },
+  {
+    question: "蝴蝶小時候是什麼？",
+    choices: ["蝌蚪", "小鳥", "蝸牛", "毛毛蟲"],
+    answer: "毛毛蟲"
+  }
+];
+
+// ===== 遊戲規則 =====
+const startScreen = document.getElementById("startScreen");
+const startBtn = document.getElementById("startBtn");
+const winScreen = document.getElementById("winScreen");
+const loseScreen = document.getElementById("loseScreen");
+const loseText = document.getElementById("loseText");
+const questionText = document.getElementById("question");
+const qNum = document.getElementById("qNum");
+const qTotal = document.getElementById("qTotal");
+const scoreText = document.getElementById("score");
+const heartsText = document.getElementById("hearts");
+const feedback = document.getElementById("feedback");
+const stars = document.getElementById("stars");
+const winText = document.getElementById("winText");
+const answerButtons = document.querySelectorAll(".answer");
+const game = document.getElementById("game");
+
+const maxHearts = 3;     // 我的愛心
+const bossMaxHp = 7;     // 魔王有幾滴血（測試時可以先改成 2）
+
+let current = 0;
+let score = 0;
+let hearts = maxHearts;
+let bossHp = bossMaxHp;
+let waiting = false;
+
+// ===== 魔王：用 JavaScript 做出來，放在題目上面 =====
+const bossBox = document.createElement("div");
+bossBox.style.cssText = "display:flex;align-items:center;gap:14px;margin-bottom:8px;";
+const bossFace = document.createElement("div");
+bossFace.style.cssText = "font-size:58px;line-height:1;transition:transform .2s;";
+const bossRight = document.createElement("div");
+bossRight.style.cssText = "flex:1;";
+const bossName = document.createElement("div");
+bossName.style.cssText = "font-weight:900;font-size:18px;color:#ffa8a8;";
+const bossBarBack = document.createElement("div");
+bossBarBack.style.cssText = "height:18px;margin-top:6px;background:#0b1222;border:2px solid #ffa8a8;border-radius:9px;overflow:hidden;";
+const bossBar = document.createElement("div");
+bossBar.style.cssText = "height:100%;background:linear-gradient(90deg,#ff6b6b,#ffa94d);transition:width .3s;";
+bossBarBack.appendChild(bossBar);
+bossRight.appendChild(bossName);
+bossRight.appendChild(bossBarBack);
+bossBox.appendChild(bossFace);
+bossBox.appendChild(bossRight);
+document.getElementById("quiz").prepend(bossBox);
+
+// 魔王剩一半血以下就生氣
+function bossAngry() {
+  return bossHp <= bossMaxHp / 2;
+}
+
+function updateBoss() {
+  bossFace.textContent = bossAngry() ? "👹" : "🐉";
+  bossName.textContent = (bossAngry() ? "魔王生氣了！" : "魔王") + "　血 " + bossHp + " / " + bossMaxHp;
+  bossBar.style.width = (bossHp / bossMaxHp * 100) + "%";
+}
+
+// 晃一下（CSS 已經有 class "shake"）
+function shake(el) {
+  el.classList.remove("shake");
+  void el.offsetWidth;
+  el.classList.add("shake");
+}
+
+// 魔王攻擊：遊戲外框閃紅光，魔王變成 🔥
+function bossAttack() {
+  bossFace.style.transform = "scale(1.4)";
+  game.style.background = "#5a1620";
+  game.style.borderColor = "#ff3b3b";
+  bossFace.textContent = "🔥";
+  setTimeout(function () {
+    bossFace.style.transform = "scale(1)";
+    game.style.background = "";
+    game.style.borderColor = "";
+    updateBoss();
+  }, 500);
+}
+
+function updateTop() {
+  scoreText.textContent = score;
+  heartsText.textContent = "❤️".repeat(hearts) + "🤍".repeat(maxHearts - hearts);
+}
+
+function showQuestion() {
+  const q = questions[current];
+  qNum.textContent = current + 1;
+  qTotal.textContent = questions.length;
+  questionText.textContent = q.question;
+  feedback.textContent = "";
+  feedback.className = "";
+  answerButtons.forEach(function (btn, i) {
+    btn.textContent = q.choices[i];
+    btn.classList.remove("correct", "wrong");
+  });
+}
+
+function checkAnswer(btn) {
+  if (waiting) return;
+  waiting = true;
+  const q = questions[current];
+
+  if (btn.textContent === q.answer) {          // 答對：打魔王一下
+    btn.classList.add("correct");
+    score = score + 1;
+    bossHp = bossHp - 1;
+    shake(bossFace);
+    feedback.textContent = "⚔️ 打中魔王！";
+    feedback.className = "good";
+    updateBoss();
+  } else {                                     // 答錯：魔王攻擊我
+    btn.classList.add("wrong");
+    answerButtons.forEach(function (b) {
+      if (b.textContent === q.answer) b.classList.add("correct");
+    });
+    hearts = hearts - 1;
+    feedback.textContent = "🔥 魔王攻擊！答案是「" + q.answer + "」";
+    feedback.className = "bad";
+    bossAttack();
+  }
+  updateTop();
+  setTimeout(nextQuestion, 1000);
+}
+
+function nextQuestion() {
+  if (hearts <= 0) {
+    loseText.textContent = "魔王贏了，再試一次吧！";
+    loseScreen.classList.remove("hidden");
+    return;
+  }
+  if (bossHp <= 0) {                           // 魔王沒血了：過關
+    showWin();
+    return;
+  }
+  current = current + 1;
+  if (current < questions.length) {
+    waiting = false;
+    showQuestion();
+  } else {                                     // 題目用完，魔王還有血：魔王逃走了
+    loseText.textContent = "題目用完了，魔王逃走了！";
+    loseScreen.classList.remove("hidden");
+  }
+}
+
+function showWin() {
+  let n = 1;
+  if (hearts >= 3) n = 3;
+  else if (hearts === 2) n = 2;
+  stars.textContent = "⭐".repeat(n);
+  winText.textContent = "你打倒魔王了！還剩 " + hearts + " 顆愛心";
+  winScreen.classList.remove("hidden");
+}
+
+function startGame() {
+  current = 0;
+  score = 0;
+  hearts = maxHearts;
+  bossHp = bossMaxHp;
+  waiting = false;
+  updateTop();
+  updateBoss();
+  showQuestion();
+  startScreen.classList.add("hidden");
+  winScreen.classList.add("hidden");
+  loseScreen.classList.add("hidden");
+}
+
+answerButtons.forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    checkAnswer(btn);
+  });
+});
+startBtn.addEventListener("click", startGame);
+document.querySelectorAll(".againBtn").forEach(function (btn) {
+  btn.addEventListener("click", startGame);
+});
+
+updateTop();
+updateBoss();
+showQuestion();
+  </script>
+</body>
+</html>
