@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>問答闖關</title>
+  <style>
+/* ===== CSS 窗格 ===== */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 16px;
+  background: #10182b;
+  font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+
+#game {
+  position: relative;
+  width: min(100%, 560px);
+  min-height: 460px;
+  background: #17243a;
+  border: 3px solid #344968;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 50px #0008;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: linear-gradient(90deg, #10233c, #1e4260);
+}
+.brand { font-size: 22px; font-weight: 900; color: #65f3d1; }
+.stat { font-weight: bold; color: #c8d8ef; }
+.stat b { color: #ffe45e; font-size: 22px; }
+#hearts { font-size: 22px; letter-spacing: 2px; }
+
+#quiz { padding: 22px 22px 18px; }
+.progress { color: #c8d8ef; font-weight: bold; }
+.progress b { color: #ffe45e; }
+
+/* 題目 */
+#question {
+  margin: 10px 0 18px;
+  min-height: 72px;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+/* 四個答案按鈕 */
+#answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.answer {
+  padding: 16px 10px;
+  font-size: 22px;
+  font-weight: 900;
+  color: white;
+  background: linear-gradient(135deg, #3b5bdb, #5f3dc4);
+  border: 3px solid #91a7ff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform .15s, background .2s;
+}
+.answer:hover { transform: translateY(-3px); }
+
+/* 答對的按鈕（JS 加上 class "correct"） */
+.answer.correct { background: #2b8a3e; border-color: #8ce99a; }
+/* 答錯的按鈕（JS 加上 class "wrong"） */
+.answer.wrong { background: #c92a2a; border-color: #ffa8a8; }
+/* 可以加上 class "shake" 讓按鈕晃一下 */
+.shake { animation: shake .4s; }
+@keyframes shake {
+  25% { translate: -6px 0; }
+  75% { translate: 6px 0; }
+}
+
+/* 答完一題的回饋文字，例如「✔ 答對了！」 */
+#feedback {
+  margin-top: 16px;
+  min-height: 34px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 900;
+}
+#feedback.good { color: #8ce99a; }
+#feedback.bad { color: #ffa8a8; }
+
+/* 開始、勝利、失敗畫面 */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  background: #0b1222f0;
+}
+.overlay h1 { margin: 0; font-size: 44px; }
+.overlay p { margin: 0; font-size: 20px; color: #c8d8ef; }
+#startScreen h1 { color: #74c0fc; }
+#winScreen h1 { color: #ffa94d; }
+#loseScreen h1 { color: #ff6b6b; }
+#stars { font-size: 52px; letter-spacing: 6px; min-height: 64px; }
+
+.overlay button {
+  margin-top: 12px;
+  padding: 12px 34px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #10182b;
+  background: linear-gradient(#fff36b, #ffc940);
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 5px 0 #c08a00;
+  cursor: pointer;
+}
+
+.hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<!-- ===== HTML 窗格 ===== -->
+<div id="game">
+  <div class="topbar">
+    <span class="brand">❓ 問答闖關</span>
+    <span id="timerStat" class="stat hidden">⏱ <b id="timer">10</b></span>
+    <span class="stat">分數 <b id="score">0</b></span>
+    <span id="hearts">❤️❤️❤️</span>
+  </div>
+
+  <div id="quiz">
+    <div class="progress">第 <b id="qNum">1</b> / <b id="qTotal">3</b> 題</div>
+    <div id="question">題目</div>
+    <div id="answers">
+      <button class="answer">A</button>
+      <button class="answer">B</button>
+      <button class="answer">C</button>
+      <button class="answer">D</button>
+    </div>
+    <div id="feedback"></div>
+  </div>
+
+  <div id="startScreen" class="overlay">
+    <h1>❓ 問答闖關</h1>
+    <p>每一題選一個答案</p>
+    <p>全部答完就過關！</p>
+    <button id="startBtn">▶ 開始</button>
+  </div>
+
+  <div id="winScreen" class="overlay hidden">
+    <h1>🏆 過關了！</h1>
+    <div id="stars"></div>
+    <p id="winText">你答完了所有題目！</p>
+    <button class="againBtn">↻ 再玩一次</button>
+  </div>
+
+  <div id="loseScreen" class="overlay hidden">
+    <h1>💔 愛心用完了</h1>
+    <p id="loseText">再試一次吧！</p>
+    <button class="againBtn">↻ 再玩一次</button>
+  </div>
+</div>
+
+  <script>
+/* ===== JavaScript 窗格 ===== */
+// ===== 問答闖關：完整版（台灣小知識 10 題） =====
+
+// ===== 題目清單（資料）=====
+// 每一題有：question 題目、choices 四個選項、answer 正確答案
+const questions = [
+  {
+    question: "台灣最高的山是哪一座？",
+    choices: ["玉山", "雪山", "合歡山", "阿里山"],
+    answer: "雪山"
+  },
+  {
+    question: "台北 101 在哪一個城市？",
+    choices: ["台中", "高雄", "台北", "台南"],
+    answer: "台北"
+  },
+  {
+    question: "台灣最長的河流是哪一條？",
+    choices: ["淡水河", "濁水溪", "高屏溪", "大甲溪"],
+    answer: "濁水溪"
+  },
+  {
+    question: "台灣的國寶魚是哪一種魚？",
+    choices: ["櫻花鉤吻鮭", "吳郭魚", "虱目魚", "鯉魚"],
+    answer: "櫻花鉤吻鮭"
+  },
+  {
+    question: "端午節的時候，大家常吃什麼？",
+    choices: ["月餅", "湯圓", "年糕", "粽子"],
+    answer: "粽子"
+  },
+  {
+    question: "中秋節的時候，大家常吃什麼？",
+    choices: ["粽子", "湯圓", "月餅", "春捲"],
+    answer: "月餅"
+  },
+  {
+    question: "台灣的東邊是哪一個大洋？",
+    choices: ["大西洋", "印度洋", "太平洋", "北冰洋"],
+    answer: "太平洋"
+  },
+  {
+    question: "台灣黑熊胸前的白毛是什麼形狀？",
+    choices: ["圓形", "V 字形", "星形", "方形"],
+    answer: "V 字形"
+  },
+  {
+    question: "澎湖在台灣本島的哪一邊？",
+    choices: ["東邊", "西邊", "南邊", "北邊"],
+    answer: "西邊"
+  },
+  {
+    question: "珍珠奶茶裡，黑黑一顆一顆的是什麼？",
+    choices: ["紅豆", "巧克力", "芝麻", "粉圓"],
+    answer: "粉圓"
+  }
+];
+
+// ===== 遊戲規則 =====
+const startScreen = document.getElementById("startScreen");
+const startBtn = document.getElementById("startBtn");
+const winScreen = document.getElementById("winScreen");
+const loseScreen = document.getElementById("loseScreen");
+const questionText = document.getElementById("question");
+const qNum = document.getElementById("qNum");
+const qTotal = document.getElementById("qTotal");
+const scoreText = document.getElementById("score");
+const heartsText = document.getElementById("hearts");
+const feedback = document.getElementById("feedback");
+const stars = document.getElementById("stars");
+const winText = document.getElementById("winText");
+const answerButtons = document.querySelectorAll(".answer");
+
+// 一開始有幾顆愛心（測試時可以先改成 1）
+const maxHearts = 3;
+
+// 現在是第幾題（從 0 開始數）、答對幾題、剩幾顆愛心
+let current = 0;
+let score = 0;
+let hearts = maxHearts;
+
+// 答完一題要等 1 秒：等的時候按答案沒有反應
+let waiting = false;
+
+// 更新上方的分數和愛心
+function updateTop() {
+  scoreText.textContent = score;
+  heartsText.textContent = "❤️".repeat(hearts) + "🤍".repeat(maxHearts - hearts);
+}
+
+// 把第 current 題放到畫面上
+function showQuestion() {
+  const q = questions[current];
+  qNum.textContent = current + 1;
+  qTotal.textContent = questions.length;
+  questionText.textContent = q.question;
+  feedback.textContent = "";
+  feedback.className = "";
+  answerButtons.forEach(function (btn, i) {
+    btn.textContent = q.choices[i];
+    btn.classList.remove("correct", "wrong");
+  });
+}
+
+// 按一個答案：比一比對不對
+function checkAnswer(btn) {
+  if (waiting) return;                       // 正在等 1 秒、或遊戲結束了：不理它
+  waiting = true;
+  const q = questions[current];
+
+  if (btn.textContent === q.answer) {        // 答對了
+    btn.classList.add("correct");
+    score = score + 1;
+    feedback.textContent = "✔ 答對了！";
+    feedback.className = "good";
+  } else {                                   // 答錯了：少一顆愛心，正確答案亮綠色
+    btn.classList.add("wrong");
+    answerButtons.forEach(function (b) {
+      if (b.textContent === q.answer) b.classList.add("correct");
+    });
+    hearts = hearts - 1;
+    feedback.textContent = "✘ 答錯了，答案是「" + q.answer + "」";
+    feedback.className = "bad";
+  }
+  updateTop();
+
+  setTimeout(nextQuestion, 1000);            // 等 1 秒再往下走
+}
+
+// 下一題；愛心用完就輸，題目做完就過關
+function nextQuestion() {
+  if (hearts <= 0) {
+    loseScreen.classList.remove("hidden");
+    return;                                  // waiting 還是 true：結束後按答案沒反應
+  }
+  current = current + 1;
+  if (current < questions.length) {
+    waiting = false;
+    showQuestion();
+  } else {
+    showWin();
+  }
+}
+
+// 過關畫面：9–10 分 3 顆星，6–8 分 2 顆，其他 1 顆
+function showWin() {
+  let n = 1;
+  if (score >= 9) n = 3;
+  else if (score >= 6) n = 2;
+  stars.textContent = "⭐".repeat(n);
+  winText.textContent = "你答對了 " + score + " 題！";
+  winScreen.classList.remove("hidden");
+}
+
+// 開新的一局：回到第 1 題，分數歸零，愛心回到 3 顆
+function startGame() {
+  current = 0;
+  score = 0;
+  hearts = maxHearts;
+  waiting = false;
+  updateTop();
+  showQuestion();
+  startScreen.classList.add("hidden");
+  winScreen.classList.add("hidden");
+  loseScreen.classList.add("hidden");
+}
+
+answerButtons.forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    checkAnswer(btn);
+  });
+});
+
+// 按「開始」
+startBtn.addEventListener("click", startGame);
+
+// 按「再玩一次」（過關畫面和失敗畫面各有一個）
+document.querySelectorAll(".againBtn").forEach(function (btn) {
+  btn.addEventListener("click", startGame);
+});
+
+updateTop();
+showQuestion();
+  </script>
+</body>
+</html>

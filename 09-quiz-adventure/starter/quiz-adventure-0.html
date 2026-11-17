@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>問答闖關</title>
+  <style>
+/* ===== CSS 窗格 ===== */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 16px;
+  background: #10182b;
+  font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+
+#game {
+  position: relative;
+  width: min(100%, 560px);
+  min-height: 460px;
+  background: #17243a;
+  border: 3px solid #344968;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 50px #0008;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: linear-gradient(90deg, #10233c, #1e4260);
+}
+.brand { font-size: 22px; font-weight: 900; color: #65f3d1; }
+.stat { font-weight: bold; color: #c8d8ef; }
+.stat b { color: #ffe45e; font-size: 22px; }
+#hearts { font-size: 22px; letter-spacing: 2px; }
+
+#quiz { padding: 22px 22px 18px; }
+.progress { color: #c8d8ef; font-weight: bold; }
+.progress b { color: #ffe45e; }
+
+/* 題目 */
+#question {
+  margin: 10px 0 18px;
+  min-height: 72px;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+/* 四個答案按鈕 */
+#answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.answer {
+  padding: 16px 10px;
+  font-size: 22px;
+  font-weight: 900;
+  color: white;
+  background: linear-gradient(135deg, #3b5bdb, #5f3dc4);
+  border: 3px solid #91a7ff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform .15s, background .2s;
+}
+.answer:hover { transform: translateY(-3px); }
+
+/* 答對的按鈕（JS 加上 class "correct"） */
+.answer.correct { background: #2b8a3e; border-color: #8ce99a; }
+/* 答錯的按鈕（JS 加上 class "wrong"） */
+.answer.wrong { background: #c92a2a; border-color: #ffa8a8; }
+/* 可以加上 class "shake" 讓按鈕晃一下 */
+.shake { animation: shake .4s; }
+@keyframes shake {
+  25% { translate: -6px 0; }
+  75% { translate: 6px 0; }
+}
+
+/* 答完一題的回饋文字，例如「✔ 答對了！」 */
+#feedback {
+  margin-top: 16px;
+  min-height: 34px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 900;
+}
+#feedback.good { color: #8ce99a; }
+#feedback.bad { color: #ffa8a8; }
+
+/* 開始、勝利、失敗畫面 */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  background: #0b1222f0;
+}
+.overlay h1 { margin: 0; font-size: 44px; }
+.overlay p { margin: 0; font-size: 20px; color: #c8d8ef; }
+#startScreen h1 { color: #74c0fc; }
+#winScreen h1 { color: #ffa94d; }
+#loseScreen h1 { color: #ff6b6b; }
+#stars { font-size: 52px; letter-spacing: 6px; min-height: 64px; }
+
+.overlay button {
+  margin-top: 12px;
+  padding: 12px 34px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #10182b;
+  background: linear-gradient(#fff36b, #ffc940);
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 5px 0 #c08a00;
+  cursor: pointer;
+}
+
+.hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<!-- ===== HTML 窗格 ===== -->
+<div id="game">
+  <div class="topbar">
+    <span class="brand">❓ 問答闖關</span>
+    <span id="timerStat" class="stat hidden">⏱ <b id="timer">10</b></span>
+    <span class="stat">分數 <b id="score">0</b></span>
+    <span id="hearts">❤️❤️❤️</span>
+  </div>
+
+  <div id="quiz">
+    <div class="progress">第 <b id="qNum">1</b> / <b id="qTotal">3</b> 題</div>
+    <div id="question">題目</div>
+    <div id="answers">
+      <button class="answer">A</button>
+      <button class="answer">B</button>
+      <button class="answer">C</button>
+      <button class="answer">D</button>
+    </div>
+    <div id="feedback"></div>
+  </div>
+
+  <div id="startScreen" class="overlay">
+    <h1>❓ 問答闖關</h1>
+    <p>每一題選一個答案</p>
+    <p>全部答完就過關！</p>
+    <button id="startBtn">▶ 開始</button>
+  </div>
+
+  <div id="winScreen" class="overlay hidden">
+    <h1>🏆 過關了！</h1>
+    <div id="stars"></div>
+    <p id="winText">你答完了所有題目！</p>
+    <button class="againBtn">↻ 再玩一次</button>
+  </div>
+
+  <div id="loseScreen" class="overlay hidden">
+    <h1>💔 愛心用完了</h1>
+    <p id="loseText">再試一次吧！</p>
+    <button class="againBtn">↻ 再玩一次</button>
+  </div>
+</div>
+
+  <script>
+/* ===== JavaScript 窗格 ===== */
+// ===== 問答闖關：起始遊戲 =====
+// 現在：按「開始」會出現題目，按任何一個答案就跳到下一題。
+// 還不會：說對錯、加分、星星、扣愛心、贏或輸。
+
+// ===== 題目清單（資料）=====
+// 每一題有：question 題目、choices 四個選項、answer 正確答案
+const questions = [
+  {
+    question: "台灣最高的山是哪一座？",
+    choices: ["玉山", "雪山", "合歡山", "阿里山"],
+    answer: "雪山"
+  },
+  {
+    question: "台北 101 在哪一個城市？",
+    choices: ["台中", "高雄", "台北", "台南"],
+    answer: "台北"
+  },
+  {
+    question: "台灣最長的河流是哪一條？",
+    choices: ["淡水河", "濁水溪", "高屏溪", "大甲溪"],
+    answer: "濁水溪"
+  }
+];
+
+// ===== 遊戲規則 =====
+const startScreen = document.getElementById("startScreen");
+const startBtn = document.getElementById("startBtn");
+const questionText = document.getElementById("question");
+const qNum = document.getElementById("qNum");
+const qTotal = document.getElementById("qTotal");
+const answerButtons = document.querySelectorAll(".answer");
+
+// 現在是第幾題（從 0 開始數）
+let current = 0;
+
+// 把第 current 題放到畫面上
+function showQuestion() {
+  const q = questions[current];
+  qNum.textContent = current + 1;
+  qTotal.textContent = questions.length;
+  questionText.textContent = q.question;
+  answerButtons.forEach(function (btn, i) {
+    btn.textContent = q.choices[i];
+  });
+}
+
+// 按一個答案：現在只會跳到下一題
+answerButtons.forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    current = current + 1;
+    if (current < questions.length) {
+      showQuestion();
+    } else {
+      current = 0;
+      showQuestion();   // 題目做完了，又從第 1 題開始
+    }
+  });
+});
+
+// 按「開始」：關掉開始畫面
+startBtn.addEventListener("click", function () {
+  startScreen.classList.add("hidden");
+});
+
+showQuestion();
+  </script>
+</body>
+</html>

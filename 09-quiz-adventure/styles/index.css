@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+TC:wght@500;900&display=swap');
+
+:root {
+  --neon: #5ef2ff; --pink: #ff5ea8; --yellow: #ffe45e; --green: #6dff8a; --orange: #ffa94d;
+  --panel: #0c1130;
+  /* game stages (deck 04 mapping): start blue, play green, victory orange, game over red */
+  --c-start: #6ea8ff; --c-play: #6dff8a; --c-win: #ffa94d; --c-lose: #ff5e6c;
+}
+
+.slidev-layout {
+  color: #fff;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 500;
+  font-size: 1.35rem;
+  padding: 1.6rem 2.6rem;
+  background-color: #080b18;
+  background-image:
+    radial-gradient(2px 2px at 10% 20%, #fff8, transparent),
+    radial-gradient(2px 2px at 70% 35%, #fff8, transparent),
+    radial-gradient(1px 1px at 40% 80%, #fff8, transparent),
+    radial-gradient(2px 2px at 90% 75%, #fff8, transparent),
+    radial-gradient(1px 1px at 55% 10%, #fff6, transparent),
+    radial-gradient(circle at 20% 10%, #1a1f4d 0, #080b18 55%);
+}
+.slidev-layout h1 {
+  font-family: 'Press Start 2P', 'Noto Sans TC', monospace;
+  font-size: 1.55rem; line-height: 1.6; color: var(--neon);
+  text-shadow: 0 0 12px #5ef2ff88; margin-bottom: .8rem;
+}
+.slidev-layout h1 + p { opacity: 1; }
+.slidev-layout p { margin: .4rem 0; }
+.slidev-layout :not(pre) > code { color: var(--yellow); background: #ffffff14; padding: 0 .3em; border-radius: 3px; }
+
+.big { font-size: 2.4rem; font-weight: 900; line-height: 1.3; }
+.huge { font-size: 4.5rem; line-height: 1.2; }
+.q { color: var(--yellow); font-weight: 900; font-size: 1.8rem; }
+.neon { color: var(--neon); } .pink { color: var(--pink); }
+.yellow { color: var(--yellow); } .green { color: var(--green); } .orange { color: var(--orange); }
+.center { text-align: center; }
+.small { font-size: 1rem; opacity: .85; }
+
+.card { border: 4px solid var(--neon); background: #0c1130dd; padding: .5rem 1rem; margin: .45rem 0; box-shadow: 6px 6px 0 #000; }
+.card.pink { border-color: var(--pink); } .card.green { border-color: var(--green); }
+.card.yellow { border-color: var(--yellow); } .card.orange { border-color: var(--orange); }
+.challenge { border: 4px dashed var(--yellow); padding: .6rem 1.2rem; background: #2a2208aa; }
+.warn { border: 4px solid var(--pink); background: #3a0b22cc; padding: .5rem 1rem; box-shadow: 6px 6px 0 #000; }
+.tag { font-family: 'Press Start 2P', monospace; font-size: .7rem; color: #000; background: var(--yellow); padding: .3rem .6rem; display: inline-block; margin-bottom: .4rem; }
+.tag.neon { background: var(--neon); } .tag.pink { background: var(--pink); } .tag.green { background: var(--green); }
+
+.row { display: flex; gap: 1.2rem; justify-content: center; align-items: stretch; flex-wrap: wrap; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; align-items: start; }
+.cols.wide-left { grid-template-columns: 3fr 2fr; }
+.cols.wide-right { grid-template-columns: 2fr 3fr; }
+
+/* numbered action list: one action per line */
+ol.steps { counter-reset: s; list-style: none; padding: 0; margin: .3rem 0; }
+ol.steps > li { counter-increment: s; position: relative; padding: .25rem 0 .25rem 2.6rem; line-height: 1.5; }
+ol.steps > li::before {
+  content: counter(s); position: absolute; left: 0; top: .3rem;
+  width: 1.9rem; height: 1.9rem; line-height: 1.9rem; text-align: center;
+  font-family: 'Press Start 2P', monospace; font-size: .8rem;
+  background: var(--neon); color: #000; box-shadow: 3px 3px 0 #000;
+}
+
+/* real screenshots */
+.shot { position: relative; border: 4px solid #fff; box-shadow: 8px 8px 0 #000; line-height: 0; }
+.shot img { width: 100%; display: block; }
+.shot .label { position: absolute; top: -.9rem; right: .6rem; line-height: 1; }
+.hl {
+  position: absolute; border: 4px solid var(--pink); border-radius: 6px;
+  box-shadow: 0 0 0 4px #ff5ea855, 0 0 18px var(--pink); animation: pulse 1.2s ease-in-out infinite;
+}
+.hl-note {
+  position: absolute; line-height: 1.2; font-weight: 900; font-size: 1rem; color: #000;
+  background: var(--pink); padding: .2rem .5rem; white-space: nowrap; box-shadow: 3px 3px 0 #000;
+}
+@keyframes pulse { 50% { box-shadow: 0 0 0 8px #ff5ea822, 0 0 26px var(--pink); } }
+
+.slidev-code-wrapper, .slidev-code { font-size: .95rem !important; line-height: 1.45 !important; }
+.slidev-code-wrapper { margin: .3rem 0 !important; }
+
+.check li { list-style: none; margin-left: -1.2rem; }
+.float { animation: bob 2s ease-in-out infinite; display: inline-block; }
+@keyframes bob { 50% { transform: translateY(-14px); } }
+
+/* Slidev's goto dialog keeps its result list visible after closing if search text remains */
+#slidev-goto-dialog.\-top-20 .autocomplete-list { display: none; }
+
+/* keep non-highlighted code lines readable on a projector */
+.slidev-code .dishonored { opacity: .55 !important; }
+
+/* check lists on the AI prompt slides */
+.checks .steps { font-size: 1.05rem; }
+.checks .steps > li { padding-bottom: .35rem; }
+
+/* ===== added in deck 08 ===== */
+.tag.orange { background: var(--orange); }
+.card.start { border-color: var(--c-start); } .card.play { border-color: var(--c-play); }
+.card.win { border-color: var(--c-win); } .card.lose { border-color: var(--c-lose); }
+.c-start { color: var(--c-start); } .c-play { color: var(--c-play); } .c-win { color: var(--c-win); } .c-lose { color: var(--c-lose); }
+
+/* complete-game strip: 開始／遊玩／勝利／失敗／重玩 */
+.stages { display: flex; gap: .4rem; }
+.stages > div { flex: 1; text-align: center; font-weight: 900; padding: .25rem .2rem; border: 3px solid; background: #0c1130; box-shadow: 4px 4px 0 #000; }
+.stages .s1 { border-color: var(--c-start); color: var(--c-start); }
+.stages .s2 { border-color: var(--c-play); color: var(--c-play); }
+.stages .s3 { border-color: var(--c-win); color: var(--c-win); }
+.stages .s4 { border-color: var(--c-lose); color: var(--c-lose); }
+.stages .s5 { border-color: #fff; color: #fff; }
+
+/* tick lists: a box before each line */
+ul.check { list-style: none; padding: 0; margin: .2rem 0; }
+ul.check > li { position: relative; padding: .2rem 0 .2rem 2rem; line-height: 1.45; margin: 0; }
+ul.check > li::before { content: ''; position: absolute; left: 0; top: .45rem; width: 1.15rem; height: 1.15rem; border: 3px solid var(--green); }
+
+/* real screenshot sized by height: <div class="shot fit" style="--h:18rem"> */
+.shot.fit { display: inline-block; }
+.shot.fit img { width: auto; height: var(--h, 18rem); }
+
+/* left-to-right flow of cards */
+.flow { display: flex; align-items: stretch; gap: .4rem; }
+.flow > .card { flex: 1; text-align: center; margin: 0; }
+.arrow-r { align-self: center; font-size: 1.6rem; font-weight: 900; color: var(--yellow); }
+
+/* bug-report sentence */
+.bug { font-size: 1.05rem; line-height: 1.45; }
+
+/* simple table for symptom lists */
+table.sym { border-collapse: collapse; width: 100%; font-size: 1rem; line-height: 1.35; }
+table.sym th { background: var(--neon); color: #000; padding: .2rem .4rem; text-align: left; }
+table.sym td { border: 2px solid #ffffff40; padding: .25rem .4rem; vertical-align: top; background: #0c1130cc; }
+
+/* prompt fill-in practice: word bank chips students may copy words from */
+.bank { display: flex; flex-wrap: wrap; gap: .3rem; margin: .2rem 0 .1rem; }
+.bank > span { font-size: 1rem; line-height: 1.4; border: 2px solid var(--yellow); color: var(--yellow); padding: 0 .4rem; background: #0c1130; }
+.fill { font-size: 1.02rem; line-height: 1.45; }
+.fill .n { display: inline-block; min-width: 1.4rem; text-align: center; background: var(--pink); color: #000; font-weight: 900; margin-right: .3rem; }
