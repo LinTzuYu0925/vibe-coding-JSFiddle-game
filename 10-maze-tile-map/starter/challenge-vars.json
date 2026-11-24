@@ -1,0 +1,64 @@
+{
+ "challenge-a.html": [
+  "level",
+  "grid",
+  "px",
+  "py",
+  "hasKey",
+  "energy"
+ ],
+ "challenge-b1.html": [
+  "level",
+  "grid",
+  "px",
+  "py",
+  "hasKey",
+  "energy",
+  "monsters",
+  "startX",
+  "startY",
+  "hasSword",
+  "steps"
+ ],
+ "challenge-b2.html": [
+  "level",
+  "grid",
+  "px",
+  "py",
+  "hasKey",
+  "energy",
+  "monsters",
+  "startX",
+  "startY",
+  "hasSword",
+  "steps"
+ ],
+ "challenge-c1.html": [
+  "level",
+  "grid",
+  "px",
+  "py",
+  "hasKey",
+  "energy"
+ ],
+ "challenge-c2.html": [
+  "level",
+  "grid",
+  "px",
+  "py",
+  "hasKey",
+  "energy",
+  "starsGot",
+  "starTotal"
+ ],
+ "challenge-c3.html": [
+  "level",
+  "grid",
+  "px",
+  "py",
+  "hasKey",
+  "energy",
+  "starsGot",
+  "starTotal"
+ ]
+}
